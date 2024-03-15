@@ -13,31 +13,36 @@ echo "para ignorar os arquivos que já foram compactados, e adicionar somente"
 echo "os novos que tem a data de outro ano informado"
 
 
-
-
 # Pergunta ao usuário quantas datas deseja usar (limitado a 3)
-read -p "Quantos meses deseja compactar (até 3 meses)? " quantidade_meses
+while true; do
+    read -p "Quantos meses deseja compactar (até 3 meses)? " quantidade_meses
 
-# Verifica se a quantidade fornecida é um número inteiro entre 1 e 3
-if ! [[ $quantidade_meses =~ ^[1-3]$ ]]; then
-    echo "Quantidade inválida. Por favor, insira um número entre 1 e 3."
-    exit 1
-fi
+    # Verifica se a quantidade fornecida é um número inteiro entre 1 e 3
+    if [[ $quantidade_meses =~ ^[1-3]$ ]]; then
+        break
+    else
+        echo "Quantidade inválida. Por favor, insira um número entre 1 e 3."
+    fi
+done
 
-# Pergunta ao usuário qual ano deseja usar
-read -p "Digite o ano que deseja usar: " ano
+# Pergunta ao usuário qual ano deseja usar (limitado a 2 dígitos)
+while true; do
+    read -p "Digite o ano que deseja usar (apenas 2 dígitos): " ano
+
+    # Verifica se o ano fornecido tem exatamente 2 dígitos
+    if [[ $ano =~ ^[0-9]{2}$ ]]; then
+        break
+    else
+        echo "Ano inválido. Por favor, insira apenas 2 dígitos para o ano."
+    fi
+done
 
 # Pergunta ao usuário quais meses deseja usar, separados por espaço
-read -p "Digite os meses(separados por um espaço)(MM MM MM) que deseja compactar (até 3 meses): " meses_input
+read -p "Digite os meses (MM MM MM) que deseja compactar (até 3 meses): " meses_input
 
 # Divide a entrada em um array de meses
 read -ra meses <<< "$meses_input"
 
-# Verifica se o número de meses fornecidos é válido
-if (( ${#meses[@]} < 1 || ${#meses[@]} > 3 )); then
-    echo "Quantidade de meses fornecidos inválida. Forneça entre 1 e 3 meses."
-    exit 1
-fi
 
 # Loop para compactar os arquivos correspondentes a cada data fornecida
 for mes in "${meses[@]}"; do
