@@ -210,8 +210,8 @@ do_something() {
             display_menu
             ;;
         "P"|"p")
-            echo "Realizando backup dos programas..."
-            # Adicione aqui o comando para realizar o backup dos programas
+            echo "Realizando backup dos arquivos..."
+            
             definir_nome
             backup_arquivos
             display_menu
