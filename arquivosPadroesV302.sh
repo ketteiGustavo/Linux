@@ -3,7 +3,7 @@
 # Autores: Fabio Silva
 #          Luiz Gustavo
 # Melhoria de Menu e opcoes: Luiz Gustavo
-# Versao: 3.0.1
+# Versao: 3.0.2
 
                         #ARQUIVOS PADROES PARA BCKP#
 
