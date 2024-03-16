@@ -14,11 +14,10 @@
 display_menu() {
     echo "Manual de utilizacao:"
     echo "Opcoes disponiveis:"
-    echo "  [T]otal     : Realizar backup total"
+    echo "  [T]otal     : Realizar backup de todos os arquivos definidos no script"
     echo "  [P]rogramas : Realizar backup dos programas"
     echo "  [A]no&Meses : Realizar backup dos arquivos de Anos e Meses"
     echo "  [H]elp      : Acessar o menu de ajuda"
-    echo "  [U]pdate    : Baixar script atualizado"
     echo "  [E]xit      : Sair do script"
 }
 
@@ -26,11 +25,10 @@ display_menu() {
 display_manual() {
     echo "Manual de utilizacao:"
     echo "Opcoes disponiveis:"
-    echo "  [T]otal     : Realizar backup total (faz o backup de todos os arquivos)"
+    echo "  [T]otal     : Realizar backup total (faz o backup de todos os arquivos de acordo com a programacao do script)"
     echo "  [P]rogramas : Realizar backup dos programas (faz o backup dos arquivos relacionados aos programas)"
     echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup dos arquivos com datas específicas)"
     echo "  [A]juda     : Exibir o menu de ajuda (mostra este menu novamente)"
-    echo "  [U]pdate    : Baixar script atualizado (atualiza o script para a versão mais recente)"
     echo "  [E]xit      : Sair do script (encerra a execução do script)"
 }
 
@@ -134,7 +132,7 @@ rar a baseclientes arqh/*             # cad usuario
 do_something() {
     case $1 in
         "T"|"t")
-            echo "Realizando backup total..."
+            echo "Realizando backup da configuracao programada no script..."
             # Chama as funções de backup dos programas e dos arquivos de meses
             backup_meses
             backup_programas
@@ -154,10 +152,6 @@ do_something() {
             ;;
         "H"|"h")
             display_manual
-            ;;
-        "U"|"u")
-            echo "Abrindo o link para o download do script mais recente..."
-            xdg-open https://drive.google.com/uc?export=download&id=133ufQpxjg88fVbDuPc50aZUMRLe3rzPD
             ;;
         "M"|"m")
             display_menu
