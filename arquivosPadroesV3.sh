@@ -1,32 +1,37 @@
 #!/bin/bash
 
+# Autores: Fabio Silva
+#          Luiz Gustavo
+# Melhoria de Menu e opcoes: Luiz Gustavo
+# Versao: 3.0.1
+
+                        #ARQUIVOS PADRÕES PARA BCKP#
+
+
+
+
 # Função para exibir o menu
 display_menu() {
     echo "Manual de utilizacao:"
-    echo "Opcoes disponíveis:"
-    echo "  T: Realizar backup total"
-    echo "  P: Realizar backup dos programas"
-    echo "  M: Realizar backup dos arquivos de meses"
-    echo "  A: Acessar o menu de ajuda"
-    echo "  U: Baixar script atualizado"
-    echo "  E: Sair do script"
+    echo "Opcoes disponiveis:"
+    echo "  [T]otal     : Realizar backup total"
+    echo "  [P]rogramas : Realizar backup dos programas"
+    echo "  [A]no&Meses : Realizar backup dos arquivos de Anos e Meses"
+    echo "  [H]elp      : Acessar o menu de ajuda"
+    echo "  [U]pdate    : Baixar script atualizado"
+    echo "  [E]xit      : Sair do script"
 }
 
 # Função para exibir o manual
 display_manual() {
     echo "Manual de utilizacao:"
     echo "Opcoes disponiveis:"
-    echo "  T: Realizar backup total"
-    echo "  P: Realizar backup dos programas"
-    echo "  M: Realizar backup dos arquivos de meses"
-    echo "  A: Acessar o menu de ajuda"
-    echo "  E: Sair do script"
-}
-
-# Fucao para baixar a versao mais recente do script
-atualizar_script(){
-    echo "Abrindo o link para o download do script mais recente..."
-    xdg-open https://docs.google.com/spreadsheets/d/1O2weFd7Qs4XkF7GRszc7HV1KBjhRLaTZjk7Dve4nn2s/edit?pli=1#gid=0
+    echo "  [T]otal     : Realizar backup total (faz o backup de todos os arquivos)"
+    echo "  [P]rogramas : Realizar backup dos programas (faz o backup dos arquivos relacionados aos programas)"
+    echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup dos arquivos com datas específicas)"
+    echo "  [A]juda     : Exibir o menu de ajuda (mostra este menu novamente)"
+    echo "  [U]pdate    : Baixar script atualizado (atualiza o script para a versão mais recente)"
+    echo "  [E]xit      : Sair do script (encerra a execução do script)"
 }
 
 # Funcao para executar backup dos Meses
@@ -39,7 +44,7 @@ backup_meses(){
                     if [[ $quantidade_meses =~ ^[1-3]$ ]]; then
                     break
                     else
-                        echo "Quantidade inválida. Por favor, insira um número entre 1 e 3."
+                        echo "Quantidade invalida. Por favor, insira um numero entre 1 e 3."
                     fi
                 done
 
@@ -51,7 +56,7 @@ backup_meses(){
                     if [[ $ano =~ ^[0-9]{2}$ ]]; then
                     break
                     else
-                        echo "Ano inválido. Por favor, insira apenas 2 dígitos para o ano."
+                        echo "Ano invalido. Por favor, insira apenas 2 dígitos para o ano."
                     fi
                 done
 
@@ -77,7 +82,7 @@ backup_meses(){
                 rar a baseclientes "sist/sped/ajitens${padrao_aamm}*"    # ajuste
                 rar a baseclientes "sist/sped/apu*${padrao_aamm}*"       # apuracao
                 rar a baseclientes "sist/arqv/*${padrao_aamm}*"          # vendas cf
-                echo "Backup dos arquivos MMAA concluído."
+                echo "Backup dos arquivos MMAA concluido."
     done
 }
 
@@ -122,7 +127,7 @@ rar a baseclientes arqh/*             # cad usuario
                 rar a baseclientes sist/arqa/sp01z03*        # auxiliar produtos
                 rar a baseclientes sist/arqd/sp01d01*        # dd prod
                 rar a baseclientes sist/arqd/sp01o03*        # dd prod
-                echo "Backup dos programas concluído."
+                echo "Backup dos programas concluido."
 }
 
 # Função que executa uma ação com base no valor passado
@@ -133,22 +138,29 @@ do_something() {
             # Chama as funções de backup dos programas e dos arquivos de meses
             backup_meses
             backup_programas
+            display_menu
             ;;
         "P"|"p")
             echo "Realizando backup dos programas..."
             # Adicione aqui o comando para realizar o backup dos programas
             backup_programas
+            display_menu
             ;;
-        "M"|"m")
+        "A"|"a")
             echo "Menu de backup referente aos arq MMAA e AAMM"
             # nesse menu sera realizado o backup dos arquivos que tem mes e ano no nome.
             backup_meses
+            display_menu
             ;;
-        "A"|"a")
+        "H"|"h")
             display_manual
             ;;
         "U"|"u")
-            atualizar_script
+            echo "Abrindo o link para o download do script mais recente..."
+            xdg-open https://github.com/ketteiGustavo/Linux/blob/main/arquivosPadroesV3.sh
+            ;;
+        "M"|"m")
+            display_menu
             ;;
         "E"|"e")
             echo "Saindo do script."
