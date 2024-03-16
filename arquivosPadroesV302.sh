@@ -155,7 +155,7 @@ backup_meses(){
 }
 
 # Funcao para executar backup Arquivos
-backup_programas(){
+backup_arquivos(){
     rar a "$nome_bkp" arqh/*             # cad usuario
     rar a "$nome_bkp" arq/sp01*03*        # produtos
     rar a "$nome_bkp" arq/sp01a22*        # cod barras            
@@ -206,14 +206,14 @@ do_something() {
             # Chama as funções de backup dos programas e dos arquivos de meses
             definir_nome
             backup_meses
-            backup_programas
+            backup_arquivos
             display_menu
             ;;
         "P"|"p")
             echo "Realizando backup dos programas..."
             # Adicione aqui o comando para realizar o backup dos programas
             definir_nome
-            backup_programas
+            backup_arquivos
             display_menu
             ;;
         "M"|"m")
