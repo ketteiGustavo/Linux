@@ -8,17 +8,19 @@
                         #ARQUIVOS PADROES PARA BCKP#
 
 
-
+# Definindo variavel global
+nome_bkp=""
 
 # Funcao para exibir o menu
 display_menu() {
     echo "Manual de utilizacao:"
     echo "Opcoes disponiveis:"
+    echo "  [I]nicio    : Menu inicial"
     echo "  [T]otal     : backup total do script"
-    echo "  [P]rogramas : backup dos programas"
+    echo "  [P]arcial   : backup dos arquivos"
     echo "  [M]eses     : backup dos arquivos de mes e ano"
     echo "  [A]juda     : acessar o menu de ajuda"
-    echo "  [L]istar    : listar programas"
+    echo "  [L]istar    : listar arquivos"
     echo "  [E]xit      : Sair do script"
 }
 
@@ -26,8 +28,9 @@ display_menu() {
 display_manual() {
     echo "Manual de utilizacao:"
     echo "Opcoes disponiveis:"
+    echo "  [I]nicio    : Voltar ao meneu principal"
     echo "  [T]otal     : Realizar backup total (faz o backup de todos os arquivos de acordo com a programacao do script)"
-    echo "  [P]rogramas : Realizar backup dos programas (faz o backup dos arquivos relacionados aos programas)"
+    echo "  [P]arcial : Realizar backup dos arquivos (faz o backup dos arquivos previamente configurados)"
     echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup dos arquivos com datas especificas)"
     echo "  [A]juda     : Exibir o menu de ajuda (mostra este menu novamente)"
     echo "  [L]istar    : Listar a lista completa dos arquivos que são compactados na execucao desse script."
@@ -132,69 +135,70 @@ backup_meses(){
 
     # Loop para compactar os arquivos correspondentes a cada data fornecida
     for mes in "${meses[@]}"; do
+
         # Constrói o padrão para a data no formato MMAA
         padrao_mmaa="$mes$ano"
-        rar a baseclientes "sist/arqf/*${padrao_mmaa}*"     # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
+        rar a "$nome_bkp" "sist/arqf/*${padrao_mmaa}*"     # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
         # Constrói o padrão para a data no formato AAMM
         padrao_aamm="$ano$mes"
-        rar a baseclientes "sist/arqf/*${padrao_aamm}*"     
-        rar a baseclientes "sist/arqm/mv${padrao_aamm}*"      # movimento
-        rar a baseclientes "sist/arqf/gnren${padrao_aamm}*"   # gnre
-        rar a baseclientes "sist/arqi/es*${padrao_aamm}*"          # inventario
-        rar a baseclientes "sist/arqi/in*${padrao_aamm}*"          # inventario
-        rar a baseclientes "sist/sped/obs${padrao_aamm}*"      # observacao
-        rar a baseclientes "sist/sped/ajitens${padrao_aamm}*"    # ajuste
-        rar a baseclientes "sist/sped/apu*${padrao_aamm}*"       # apuracao
-        rar a baseclientes "sist/arqv/*${padrao_aamm}*"          # vendas cf
+        rar a "$nome_bkp" "sist/arqf/*${padrao_aamm}*"     
+        rar a "$nome_bkp" "sist/arqm/mv${padrao_aamm}*"      # movimento
+        rar a "$nome_bkp" "sist/arqf/gnren${padrao_aamm}*"   # gnre
+        rar a "$nome_bkp" "sist/arqi/es*${padrao_aamm}*"          # inventario
+        rar a "$nome_bkp" "sist/arqi/in*${padrao_aamm}*"          # inventario
+        rar a "$nome_bkp" "sist/sped/obs${padrao_aamm}*"      # observacao
+        rar a "$nome_bkp" "sist/sped/ajitens${padrao_aamm}*"    # ajuste
+        rar a "$nome_bkp" "sist/sped/apu*${padrao_aamm}*"       # apuracao
+        rar a "$nome_bkp" "sist/arqv/*${padrao_aamm}*"          # vendas cf
         echo "Backup dos arquivos MMAA concluido."
     done
 }
 
-# Funcao para executar backup Programas
+# Funcao para executar backup Arquivos
 backup_programas(){
-    rar a baseclientes arqh/*             # cad usuario
-    rar a baseclientes arq/sp01*03*        # produtos
-    rar a baseclientes arq/sp01a22*        # cod barras            
-    rar a baseclientes arq/sp01a25*
-    rar a baseclientes arq/sp02a25*
-    rar a baseclientes arq/sp02a11*
-    rar a baseclientes arq/sp01a18*
-    rar a baseclientes arq/sp06a42*
-    rar a baseclientes arq/sp04a93*
-    rar a baseclientes arq/sp01v04*
-    rar a baseclientes arq/sp01a43*        # cidades
-    rar a baseclientes arq/sp03a32*                # plano contas 
-    rar a baseclientes arq/sp01a02*        # setor e grupo
-    rar a baseclientes arq/sp01a08*                # plano contas gerencial
-    rar a baseclientes arq/sp01a34*                # cad transportadora
-    rar a baseclientes arq/sp02a79*                # vinc cliente
-    rar a baseclientes arq/sp04a21*                # vinc cidade
-    rar a baseclientes sist/arq/sp01a00*         # parametro
-    rar a baseclientes sist/arq/sp01a01*         # filial
-    rar a baseclientes sist/arq/sp03a80*         # filial
-    rar a baseclientes sist/arq/sp01a07*         # contas pagar
-    rar a baseclientes sist/arq/sp01a16*        # contas receber
-    rar a baseclientes sist/arq/sp01a04*
-    rar a baseclientes sist/arq/sp01a77*
-    rar a baseclientes sist/arqf/sp03a13*       # cfop
-    rar a baseclientes sist/arqf/sp19*             # ciap
-    rar a baseclientes sist/arqf/sp03a12*     # ciap
-    rar a baseclientes sist/arqf/sp04a80*     # ciap
-    rar a baseclientes sist/arqf/sp04a81*     # ciap
-    rar a baseclientes sist/arqf/sp06a62*       #
-    rar a baseclientes sist/sped/sp*             # arq sped
-    rar a baseclientes sist/arqv/sp01a80*
-    rar a baseclientes sist/arqv/sp04a46*
-    rar a baseclientes sist/arqv/vd01a80*        # operador
-    rar a baseclientes sist/arqv/v04a46*         # operador
-    rar a baseclientes sist/arqv/vd04a01*        # caixas
-    rar a baseclientes sist/arqa/sp01z03*        # auxiliar produtos
-    rar a baseclientes sist/arqd/sp01d01*        # dd prod
-    rar a baseclientes sist/arqd/sp01o03*        # dd prod
+    rar a "$nome_bkp" arqh/*             # cad usuario
+    rar a "$nome_bkp" arq/sp01*03*        # produtos
+    rar a "$nome_bkp" arq/sp01a22*        # cod barras            
+    rar a "$nome_bkp" arq/sp01a25*
+    rar a "$nome_bkp" arq/sp02a25*
+    rar a "$nome_bkp" arq/sp02a11*
+    rar a "$nome_bkp" arq/sp01a18*
+    rar a "$nome_bkp" arq/sp06a42*
+    rar a "$nome_bkp" arq/sp04a93*
+    rar a "$nome_bkp" arq/sp01v04*
+    rar a "$nome_bkp" arq/sp01a43*        # cidades
+    rar a "$nome_bkp" arq/sp03a32*                # plano contas 
+    rar a "$nome_bkp" arq/sp01a02*        # setor e grupo
+    rar a "$nome_bkp" arq/sp01a08*                # plano contas gerencial
+    rar a "$nome_bkp" arq/sp01a34*                # cad transportadora
+    rar a "$nome_bkp" arq/sp02a79*                # vinc cliente
+    rar a "$nome_bkp" arq/sp04a21*                # vinc cidade
+    rar a "$nome_bkp" sist/arq/sp01a00*         # parametro
+    rar a "$nome_bkp" sist/arq/sp01a01*         # filial
+    rar a "$nome_bkp" sist/arq/sp03a80*         # filial
+    rar a "$nome_bkp" sist/arq/sp01a07*         # contas pagar
+    rar a "$nome_bkp" sist/arq/sp01a16*        # contas receber
+    rar a "$nome_bkp" sist/arq/sp01a04*
+    rar a "$nome_bkp" sist/arq/sp01a77*
+    rar a "$nome_bkp" sist/arqf/sp03a13*       # cfop
+    rar a "$nome_bkp" sist/arqf/sp19*             # ciap
+    rar a "$nome_bkp" sist/arqf/sp03a12*     # ciap
+    rar a "$nome_bkp" sist/arqf/sp04a80*     # ciap
+    rar a "$nome_bkp" sist/arqf/sp04a81*     # ciap
+    rar a "$nome_bkp" sist/arqf/sp06a62*       #
+    rar a "$nome_bkp" sist/sped/sp*             # arq sped
+    rar a "$nome_bkp" sist/arqv/sp01a80*
+    rar a "$nome_bkp" sist/arqv/sp04a46*
+    rar a "$nome_bkp" sist/arqv/vd01a80*        # operador
+    rar a "$nome_bkp" sist/arqv/v04a46*         # operador
+    rar a "$nome_bkp" sist/arqv/vd04a01*        # caixas
+    rar a "$nome_bkp" sist/arqa/sp01z03*        # auxiliar produtos
+    rar a "$nome_bkp" sist/arqd/sp01d01*        # dd prod
+    rar a "$nome_bkp" sist/arqd/sp01o03*        # dd prod
     echo "Backup dos programas concluido."
 }
 
-# Função que executa uma ação com base no valor passado
+# Funcao que executa uma acao com base no valor passado
 do_something() {
     case $1 in
         "T"|"t")
@@ -212,18 +216,24 @@ do_something() {
             backup_programas
             display_menu
             ;;
-        "A"|"a")
+        "M"|"m")
             echo "Menu de backup referente aos arq MMAA e AAMM"
             # nesse menu sera realizado o backup dos arquivos que tem mes e ano no nome.
             definir_nome
             backup_meses
             display_menu
             ;;
-        "H"|"h")
+        "A"|"a")
+            clear
             display_manual
             ;;
-        "M"|"m")
+        "I"|"i")
+            clear
             display_menu
+            ;;
+        "L"|"l")
+            clear
+            listar_arquivos
             ;;
         "E"|"e")
             echo "Saindo do script."
@@ -235,10 +245,10 @@ do_something() {
     esac
 }
 
-# Exibir menu ao usuário
+# Exibir menu ao usuario
 display_menu
 
-# Loop para solicitar uma opção válida do usuário
+# Loop para solicitar uma opção valida do usuario
 while true; do
     read -p "Digite a opcao do menu que deseja acessar: " opcao
     do_something "$opcao"
