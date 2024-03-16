@@ -157,7 +157,7 @@ do_something() {
             ;;
         "U"|"u")
             echo "Abrindo o link para o download do script mais recente..."
-            xdg-open https://github.com/ketteiGustavo/Linux/blob/main/arquivosPadroesV3.sh
+            xdg-open https://drive.google.com/uc?export=download&id=133ufQpxjg88fVbDuPc50aZUMRLe3rzPD
             ;;
         "M"|"m")
             display_menu
