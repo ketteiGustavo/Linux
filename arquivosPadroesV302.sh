@@ -106,7 +106,7 @@ listar_arquivos(){
 backup_meses(){
 # Pergunta ao usuario quantas datas deseja usar (limitado a 3)
     while true; do
-        read -p "Quantos meses deseja compactar (até 3 meses)? " quantidade_meses
+        read -p "Quantos meses deseja compactar (ate 3 meses)? " quantidade_meses
 
         # Verifica se a quantidade fornecida e um numero inteiro entre 1 e 3
         if [[ $quantidade_meses =~ ^[1-3]$ ]]; then
