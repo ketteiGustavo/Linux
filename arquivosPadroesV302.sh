@@ -138,15 +138,15 @@ backup_meses(){
 
         # Constrói o padrão para a data no formato MMAA
         padrao_mmaa="$mes$ano"
-        rar a "$nome_bkp" "sist/arqf/*${padrao_mmaa}*"     # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
+        rar a "$nome_bkp" "sist/arqf/*${padrao_mmaa}*"          # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
         # Constrói o padrão para a data no formato AAMM
         padrao_aamm="$ano$mes"
         rar a "$nome_bkp" "sist/arqf/*${padrao_aamm}*"     
-        rar a "$nome_bkp" "sist/arqm/mv${padrao_aamm}*"      # movimento
-        rar a "$nome_bkp" "sist/arqf/gnren${padrao_aamm}*"   # gnre
-        rar a "$nome_bkp" "sist/arqi/es*${padrao_aamm}*"          # inventario
-        rar a "$nome_bkp" "sist/arqi/in*${padrao_aamm}*"          # inventario
-        rar a "$nome_bkp" "sist/sped/obs${padrao_aamm}*"      # observacao
+        rar a "$nome_bkp" "sist/arqm/mv${padrao_aamm}*"         # movimento
+        rar a "$nome_bkp" "sist/arqf/gnren${padrao_aamm}*"      # gnre
+        rar a "$nome_bkp" "sist/arqi/es*${padrao_aamm}*"        # inventario
+        rar a "$nome_bkp" "sist/arqi/in*${padrao_aamm}*"        # inventario
+        rar a "$nome_bkp" "sist/sped/obs${padrao_aamm}*"        # observacao
         rar a "$nome_bkp" "sist/sped/ajitens${padrao_aamm}*"    # ajuste
         rar a "$nome_bkp" "sist/sped/apu*${padrao_aamm}*"       # apuracao
         rar a "$nome_bkp" "sist/arqv/*${padrao_aamm}*"          # vendas cf
@@ -156,9 +156,9 @@ backup_meses(){
 
 # Funcao para executar backup Arquivos
 backup_arquivos(){
-    rar a "$nome_bkp" arqh/*             # cad usuario
-    rar a "$nome_bkp" arq/sp01*03*        # produtos
-    rar a "$nome_bkp" arq/sp01a22*        # cod barras            
+    rar a "$nome_bkp" arqh/*                    # cad usuario
+    rar a "$nome_bkp" arq/sp01*03*              # produtos
+    rar a "$nome_bkp" arq/sp01a22*              # cod barras
     rar a "$nome_bkp" arq/sp01a25*
     rar a "$nome_bkp" arq/sp02a25*
     rar a "$nome_bkp" arq/sp02a11*
@@ -166,26 +166,26 @@ backup_arquivos(){
     rar a "$nome_bkp" arq/sp06a42*
     rar a "$nome_bkp" arq/sp04a93*
     rar a "$nome_bkp" arq/sp01v04*
-    rar a "$nome_bkp" arq/sp01a43*        # cidades
-    rar a "$nome_bkp" arq/sp03a32*                # plano contas 
-    rar a "$nome_bkp" arq/sp01a02*        # setor e grupo
-    rar a "$nome_bkp" arq/sp01a08*                # plano contas gerencial
-    rar a "$nome_bkp" arq/sp01a34*                # cad transportadora
-    rar a "$nome_bkp" arq/sp02a79*                # vinc cliente
-    rar a "$nome_bkp" arq/sp04a21*                # vinc cidade
+    rar a "$nome_bkp" arq/sp01a43*              # cidades
+    rar a "$nome_bkp" arq/sp03a32*              # plano contas
+    rar a "$nome_bkp" arq/sp01a02*              # setor e grupo
+    rar a "$nome_bkp" arq/sp01a08*              # plano contas gerencial
+    rar a "$nome_bkp" arq/sp01a34*              # cad transportadora
+    rar a "$nome_bkp" arq/sp02a79*              # vinc cliente
+    rar a "$nome_bkp" arq/sp04a21*              # vinc cidade
     rar a "$nome_bkp" sist/arq/sp01a00*         # parametro
     rar a "$nome_bkp" sist/arq/sp01a01*         # filial
     rar a "$nome_bkp" sist/arq/sp03a80*         # filial
     rar a "$nome_bkp" sist/arq/sp01a07*         # contas pagar
-    rar a "$nome_bkp" sist/arq/sp01a16*        # contas receber
+    rar a "$nome_bkp" sist/arq/sp01a16*         # contas receber
     rar a "$nome_bkp" sist/arq/sp01a04*
     rar a "$nome_bkp" sist/arq/sp01a77*
-    rar a "$nome_bkp" sist/arqf/sp03a13*       # cfop
-    rar a "$nome_bkp" sist/arqf/sp19*             # ciap
-    rar a "$nome_bkp" sist/arqf/sp03a12*     # ciap
-    rar a "$nome_bkp" sist/arqf/sp04a80*     # ciap
-    rar a "$nome_bkp" sist/arqf/sp04a81*     # ciap
-    rar a "$nome_bkp" sist/arqf/sp06a62*       #
+    rar a "$nome_bkp" sist/arqf/sp03a13*        # cfop
+    rar a "$nome_bkp" sist/arqf/sp19*           # ciap
+    rar a "$nome_bkp" sist/arqf/sp03a12*        # ciap
+    rar a "$nome_bkp" sist/arqf/sp04a80*        # ciap
+    rar a "$nome_bkp" sist/arqf/sp04a81*        # ciap
+    rar a "$nome_bkp" sist/arqf/sp06a62*        #
     rar a "$nome_bkp" sist/sped/sp*             # arq sped
     rar a "$nome_bkp" sist/arqv/sp01a80*
     rar a "$nome_bkp" sist/arqv/sp04a46*
