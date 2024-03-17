@@ -266,7 +266,7 @@ backup_arquivos(){
     rar a "$nome_bkp" sist/arqd/sp01d01*        # dd prod
     rar a "$nome_bkp" sist/arqd/sp01o03*        # dd prod
     echo "Backup dos arquivos concluido! O nome do backup usado foi '$nome_bkp'. "
-    echo "Caso deseje realizar mais algum backup use o 'Menu' novamente!"
+    echo "Caso deseje realizar mais algum backup utilize o 'Menu' novamente!"
     elif [[ $confirma_backup2 =~ ^[Nn]$ ]]; then
         clear
         echo "Retornando ao menu..."
