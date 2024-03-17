@@ -19,7 +19,7 @@ display_menu() {
     echo "  [M]eses     : backup dos arquivos de mes e ano"
     echo "  [A]juda     : acessar o menu de ajuda"
     echo "  [L]istar    : listar programas"
-    echo "  [E]xit      : Sair do script"
+    echo "  [S]air      : Sair do script"
 }
 
 # Funcao para exibir o manual
@@ -31,7 +31,7 @@ display_manual() {
     echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup dos arquivos com datas especificas)"
     echo "  [A]juda     : Exibir o menu de ajuda (mostra este menu novamente)"
     echo "  [L]istar    : Listar a lista completa dos arquivos que são compactados na execucao desse script."
-    echo "  [E]xit      : Sair do script (encerra a execucao do script)"
+    echo "  [S]air      : Sair do script (encerra a execucao do script)"
 }
 
 # Funcao para definir o nome do arquivo de backup
@@ -225,9 +225,20 @@ do_something() {
         "M"|"m")
             display_menu
             ;;
-        "E"|"e")
+        "S"|"s")
+            # Solicitacao de confirmacao para sair da rotina de backup
+            read -p "Deseja realmente sair da rotina de backup? (S/N): " confirmar_saida
+
+            # Verifica se a entrada e 'N' ou 'n' para exibir o menu
+            if [[ $confirmar_saida =~ ^[Nn]$ ]]; then
+                clear
+                display_menu
+            elif [[ $confirmar_saida =~ ^[Ss]$ ]]; then
             echo "Saindo do script."
             exit 0
+            else
+                echo "Opcao digitada invalida. Por favor, confirme com 'S' ou 'N'."
+            fi
             ;;
         *)  # Opção padrão caso nenhuma correspondência seja encontrada
             echo "Opcao invalida"

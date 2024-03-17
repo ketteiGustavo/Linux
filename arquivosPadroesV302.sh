@@ -7,21 +7,24 @@
 
                         #ARQUIVOS PADROES PARA BCKP#
 
-
+# Limpa o terminal putty, para iniciar o menu no top
+clear
 # Definindo variavel global
 nome_bkp=""
 
 # Funcao para exibir o menu
 display_menu() {
-    echo "Manual de utilizacao:"
-    echo "Opcoes disponiveis:"
-    echo "  [I]nicio    : Menu inicial"
-    echo "  [T]otal     : backup total do script"
-    echo "  [P]arcial   : backup dos arquivos"
-    echo "  [M]eses     : backup dos arquivos de mes e ano"
-    echo "  [A]juda     : acessar o menu de ajuda"
-    echo "  [L]istar    : listar arquivos"
-    echo "  [E]xit      : Sair do script"
+    echo "________________________________________________________"
+    echo "| Manual de utilizacao:                                 |"
+    echo "| Opcoes disponiveis:                                   |"
+    echo "|    [I]nicio    : Menu inicial                         |"
+    echo "|    [T]otal     : backup total do script               |"
+    echo "|    [P]arcial   : backup dos arquivos                  |"
+    echo "|    [M]eses     : backup dos arquivos de mes e ano     |"
+    echo "|    [A]juda     : acessar o menu de ajuda              |"
+    echo "|    [L]istar    : listar arquivos                      |"
+    echo "|    [S]air      : Sair do script                       |"
+    echo "|_______________________________________________________|"
 }
 
 # Funcao para exibir o manual
@@ -34,13 +37,30 @@ display_manual() {
     echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup dos arquivos com datas especificas)"
     echo "  [A]juda     : Exibir o menu de ajuda (mostra este menu novamente)"
     echo "  [L]istar    : Listar a lista completa dos arquivos que são compactados na execucao desse script."
-    echo "  [E]xit      : Sair do script (encerra a execucao do script)"
+    echo "  [S]air      : Sair do script (encerra a execucao do script)"
 }
 
 # Funcao para definir o nome do arquivo de backup
 definir_nome(){
-    # Pergunta ao usuario o nome que deseja usar no arquivo de backup
-    read -p "Digite o nome para o arquivo de 'Backup'  " nome_bkp
+    while true; do
+        # Pergunta ao usuario o nome que deseja usar no arquivo de backup
+        read -p "Digite o nome para o arquivo de 'Backup'  " nome_bkp
+
+        # Confirma ao usuario o nome digitado
+        read -p "Deseja usar o nome '$nome_bkp' para esse backup? (S/N)  " confirma_nome
+
+        case $confirma_nome in
+            "s"|"S")
+                echo "Sera usado o seguinte nome para o backup: '$nome_bkp'"
+                return 0 # encerra o loop do nome
+                ;;
+            "n"|"N")
+                ;;
+            *)  # Opção padrão caso nenhuma correspondência seja encontrada
+            echo "Entrada invalida. Por favor, confirme com 'S' ou 'N'."
+            ;;
+        esac
+    done
 }
 
 # Funcao para listar os nomes e caminhos dos arquivos que serao realizados os backups
@@ -116,6 +136,50 @@ backup_meses(){
         fi
     done
 
+    # Pergunta ao usuario quais meses deseja usar, separados por espaço e confirma o que foi digitado
+    while true; do
+
+        read -p "Digite o(s) mes(es) (MM MM MM) que deseja compactar (ate '$quantidade_meses' mes(es)): " meses_input
+
+        # Validador de meses
+        meses_invalidos=0
+        for mes in $meses_input; do
+            if [[ $mes -lt 1 || $mes -gt 12 ]]; then
+                meses_invalidos=1
+                break
+            fi
+        done
+
+        if [[ $meses_invalidos -eq 1 ]]; then
+            echo "Por favor, insira apenas valores de mes entre 1 e 12."
+        else
+            # Conta o numero de meses informados acima
+            num_meses=$(echo "$meses_input" | wc -w)
+
+
+            # Verificar a quantidade digitada para nao permitir digitar meses a mais.
+            if [[ $num_meses -gt $quantidade_meses ]]; then
+                echo "Foi informado apenas '$quantidade_meses' mes(es). Por favor respeite a quantidade informada."
+            else
+                read -p "Deseja realmente usar o(s) mes(es) '$meses_input' informado(s) (S/N)?  " confirma_meses
+
+                case $confirma_meses in
+                    "S"|"s")
+                        echo "Sera realizado o backup com o(s) mes(es) informado(s) '$meses_input' "
+                        break
+                        ;;
+                    "N"|"n")
+                        clear
+                        echo "Digite novamente o(s) mes(es). "
+                        ;;
+                    *)  # Opção padrão caso nenhuma correspondência seja encontrada
+                        echo "Entrada invalida. Por favor, confirme com 'S' ou 'N'."
+                        ;;
+                esac
+            fi
+        fi
+    done
+
     # Pergunta ao usuario qual ano deseja usar (limitado a 2 dígitos)
     while true; do
     read -p "Digite o ano que deseja usar (apenas 2 digitos): " ano
@@ -126,9 +190,6 @@ backup_meses(){
         echo "Ano invalido. Por favor, insira apenas 2 digitos para o ano."
         fi
     done
-
-    # Pergunta ao usuário quais meses deseja usar, separados por espaço
-    read -p "Digite o(s) mes(es) (MM MM MM) que deseja compactar (ate 3 meses): " meses_input
 
     # Divide a entrada em um array de meses
     read -ra meses <<< "$meses_input"
@@ -150,12 +211,21 @@ backup_meses(){
         rar a "$nome_bkp" "sist/sped/ajitens${padrao_aamm}*"    # ajuste
         rar a "$nome_bkp" "sist/sped/apu*${padrao_aamm}*"       # apuracao
         rar a "$nome_bkp" "sist/arqv/*${padrao_aamm}*"          # vendas cf
-        echo "Backup dos arquivos MMAA concluido."
+        echo "Backup do(s) arquivo(s) do(s) mes(es) '$meses_input' do ano '20$ano' concluido! O nome do backup usado foi '$nome_bkp' "
+        echo "Caso deseje realizar mais algum backup utilize o 'Menu' novamente!"
     done
 }
 
 # Funcao para executar backup Arquivos
 backup_arquivos(){
+    # Solicitacao de confirmacao para iniciar o backup dos arquivos gerais
+    read -p "Confirma o backup dos arquivos descritos na lista de arquivos? (S/N)" confirma_backup2
+
+    # Verifica se a entrada foi 'S' ou 's' para iniciar o backup, do contrario volta ao menu principal
+
+    if [[ $confirma_backup2 =~ ^[Ss]$ ]]; then
+    echo "Iniciando Backup..."
+
     rar a "$nome_bkp" arqh/*                    # cad usuario
     rar a "$nome_bkp" arq/sp01*03*              # produtos
     rar a "$nome_bkp" arq/sp01a22*              # cod barras
@@ -195,7 +265,15 @@ backup_arquivos(){
     rar a "$nome_bkp" sist/arqa/sp01z03*        # auxiliar produtos
     rar a "$nome_bkp" sist/arqd/sp01d01*        # dd prod
     rar a "$nome_bkp" sist/arqd/sp01o03*        # dd prod
-    echo "Backup dos programas concluido."
+    echo "Backup dos arquivos concluido! O nome do backup usado foi '$nome_bkp'. "
+    echo "Caso deseje realizar mais algum backup use o 'Menu' novamente!"
+    elif [[ $confirma_backup2 =~ ^[Nn]$ ]]; then
+        clear
+        echo "Retornando ao menu..."
+        menu
+    else
+        echo "Entrada invalida. Por favor, confirme com 'S' ou 'N'."
+    fi
 }
 
 # Funcao que executa uma acao com base no valor passado
@@ -203,7 +281,7 @@ do_something() {
     case $1 in
         "T"|"t")
             echo "Realizando backup da configuracao programada no script..."
-            # Chama as funções de backup dos programas e dos arquivos de meses
+            # Chama as funções de backups configuradas no script
             definir_nome
             backup_meses
             backup_arquivos
@@ -217,7 +295,7 @@ do_something() {
             display_menu
             ;;
         "M"|"m")
-            echo "Menu de backup referente aos arq MMAA e AAMM"
+            echo "Menu de backup referente aos arquivos que contenham MMAA e AAMM"
             # nesse menu sera realizado o backup dos arquivos que tem mes e ano no nome.
             definir_nome
             backup_meses
@@ -234,10 +312,22 @@ do_something() {
         "L"|"l")
             clear
             listar_arquivos
+            display_menu
             ;;
-        "E"|"e")
-            echo "Saindo do script."
+        "S"|"s")
+            # Solicitacao de confirmacao para sair da rotina de backup
+            read -p "Deseja realmente sair da rotina de backup? (S/N): " confirmar_saida
+
+            # Verifica se a entrada e 'N' ou 'n' para exibir o menu
+            if [[ $confirmar_saida =~ ^[Nn]$ ]]; then
+                clear
+                display_menu
+            elif [[ $confirmar_saida =~ ^[Ss]$ ]]; then
+            echo "Saindo..."
             exit 0
+            else
+                echo "Opcao digitada invalida. Por favor, confirme com 'S' ou 'N'."
+            fi
             ;;
         *)  # Opção padrão caso nenhuma correspondência seja encontrada
             echo "Opcao invalida"
