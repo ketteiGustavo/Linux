@@ -196,7 +196,7 @@ backup_meses(){
 
     # Loop para compactar os arquivos correspondentes a cada data fornecida
     for mes in "${meses[@]}"; do
-
+        echo "Sera compactado os arquivos que contenham o(s) mes(es) '$meses_input' e o ano '$ano'."
         # Constrói o padrão para a data no formato MMAA
         padrao_mmaa="$mes$ano"
         rar a "$nome_bkp" "sist/arqf/*${padrao_mmaa}*"          # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
