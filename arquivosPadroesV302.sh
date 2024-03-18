@@ -12,6 +12,55 @@ clear
 # Definindo variavel global
 nome_bkp=""
 
+# Nome do arquivo para armazenar a senha criptografada
+senha_criptografada_file=".senha_criptografada"
+
+# Função para criptografar a senha e armazená-la no arquivo
+criptografar_senha() {
+    echo -n "$1" | openssl enc -aes-256-cbc -a -salt -pbkdf2 -out "$senha_criptografada_file"
+}
+
+# Função para descriptografar a senha armazenada no arquivo
+descriptografar_senha() {
+    senha_descriptografada=$(openssl enc -d -aes-256-cbc -a -salt -pbkdf2 -in "$senha_criptografada_file")
+    echo "$senha_descriptografada"
+}
+
+# Verificar se o arquivo de senha criptografada existe
+if [ -f "$senha_criptografada_file" ]; then
+    # Descriptografar a senha do arquivo
+    senha_pdr=$(descriptografar_senha)
+else
+    # Se o arquivo não existir, solicitar a senha e criptografá-la
+    read -sp "Defina uma senha para o script: " senha_pdr
+    echo # Adicionar uma nova linha após a entrada de senha
+    criptografar_senha "$senha_pdr"
+fi
+
+# Definindo o número máximo de tentativas
+max_tentativas=3
+tentativas=0
+
+while true; do
+    # Solicitar a senha ao usuário
+    read -sp "Por favor, digite a senha para continuar: " senha_informada
+    echo # Adicionar uma nova linha após a entrada de senha
+    
+    # Verificar se a senha inserida está correta
+    if [ "$senha_informada" != "$senha_pdr" ]; then
+        ((tentativas++))
+        echo "Senha incorreta. Tentativa $tentativas de $max_tentativas."
+        if [ $tentativas -ge $max_tentativas ]; then
+            echo "Limite de tentativas excedido. Saindo do script."
+            exit 1
+        fi
+    else
+        clear
+        echo "Senha correta. Executando o script..."
+        break
+    fi
+done
+
 # Funcao para exibir o menu
 display_menu() {
     echo "________________________________________________________"
