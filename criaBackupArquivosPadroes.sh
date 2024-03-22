@@ -1,7 +1,10 @@
 #!/bin/bash
-
-# Autores: Fabio Silva
-#          Luiz Gustavo
+#
+# criaBackupArquivosPadroes.sh - Cria backup de principais arquivos do cliente
+#
+# DATA: 18/03/2024 07:15
+# Autor:   Luiz Gustavo <luiz.gustavo@avancoinfo.com.br>
+#          
 # Melhoria de Menu e opcoes: Luiz Gustavo
 # Versao: 3.0.2
 
@@ -11,55 +14,6 @@
 clear
 # Definindo variavel global
 nome_bkp=""
-
-# Nome do arquivo para armazenar a senha criptografada
-senha_criptografada_file=".senha_criptografada"
-
-# Função para criptografar a senha e armazená-la no arquivo
-criptografar_senha() {
-    echo -n "$1" | openssl enc -aes-256-cbc -a -salt -pbkdf2 -out "$senha_criptografada_file"
-}
-
-# Função para descriptografar a senha armazenada no arquivo
-descriptografar_senha() {
-    senha_descriptografada=$(openssl enc -d -aes-256-cbc -a -salt -pbkdf2 -in "$senha_criptografada_file")
-    echo "$senha_descriptografada"
-}
-
-# Verificar se o arquivo de senha criptografada existe
-if [ -f "$senha_criptografada_file" ]; then
-    # Descriptografar a senha do arquivo
-    senha_pdr=$(descriptografar_senha)
-else
-    # Se o arquivo não existir, solicitar a senha e criptografá-la
-    read -sp "Defina uma senha para o script: " senha_pdr
-    echo # Adicionar uma nova linha após a entrada de senha
-    criptografar_senha "$senha_pdr"
-fi
-
-# Definindo o número máximo de tentativas
-max_tentativas=3
-tentativas=0
-
-while true; do
-    # Solicitar a senha ao usuário
-    read -sp "Por favor, digite a senha para continuar: " senha_informada
-    echo # Adicionar uma nova linha após a entrada de senha
-    
-    # Verificar se a senha inserida está correta
-    if [ "$senha_informada" != "$senha_pdr" ]; then
-        ((tentativas++))
-        echo "Senha incorreta. Tentativa $tentativas de $max_tentativas."
-        if [ $tentativas -ge $max_tentativas ]; then
-            echo "Limite de tentativas excedido. Saindo do script."
-            exit 1
-        fi
-    else
-        clear
-        echo "Senha correta. Executando o script..."
-        break
-    fi
-done
 
 # Funcao para exibir o menu
 display_menu() {
@@ -82,7 +36,7 @@ display_manual() {
     echo "Opcoes disponiveis:"
     echo "  [I]nicio    : Voltar ao meneu principal"
     echo "  [T]otal     : Realizar backup total (faz o backup de todos os arquivos de acordo com a programacao do script)"
-    echo "  [P]arcial : Realizar backup dos arquivos (faz o backup dos arquivos previamente configurados)"
+    echo "  [P]arcial   : Realizar backup dos arquivos (faz o backup dos arquivos previamente configurados)"
     echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup dos arquivos com datas especificas)"
     echo "  [A]juda     : Exibir o menu de ajuda (mostra este menu novamente)"
     echo "  [L]istar    : Listar a lista completa dos arquivos que são compactados na execucao desse script."
@@ -243,26 +197,42 @@ backup_meses(){
     # Divide a entrada em um array de meses
     read -ra meses <<< "$meses_input"
 
-    # Loop para compactar os arquivos correspondentes a cada data fornecida
-    for mes in "${meses[@]}"; do
-        echo "Sera compactado os arquivos que contenham o(s) mes(es) '$meses_input' e o ano '$ano'."
-        # Constrói o padrão para a data no formato MMAA
-        padrao_mmaa="$mes$ano"
-        rar a "$nome_bkp" "sist/arqf/*${padrao_mmaa}*"          # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
-        # Constrói o padrão para a data no formato AAMM
-        padrao_aamm="$ano$mes"
-        rar a "$nome_bkp" "sist/arqf/*${padrao_aamm}*"     
-        rar a "$nome_bkp" "sist/arqm/mv${padrao_aamm}*"         # movimento
-        rar a "$nome_bkp" "sist/arqf/gnren${padrao_aamm}*"      # gnre
-        rar a "$nome_bkp" "sist/arqi/es*${padrao_aamm}*"        # inventario
-        rar a "$nome_bkp" "sist/arqi/in*${padrao_aamm}*"        # inventario
-        rar a "$nome_bkp" "sist/sped/obs${padrao_aamm}*"        # observacao
-        rar a "$nome_bkp" "sist/sped/ajitens${padrao_aamm}*"    # ajuste
-        rar a "$nome_bkp" "sist/sped/apu*${padrao_aamm}*"       # apuracao
-        rar a "$nome_bkp" "sist/arqv/*${padrao_aamm}*"          # vendas cf
-        echo "Backup do(s) arquivo(s) do(s) mes(es) '$meses_input' do ano '20$ano' concluido! O nome do backup usado foi '$nome_bkp' "
-        echo "Caso deseje realizar mais algum backup utilize o 'Menu' novamente!"
-    done
+    # Solicitacao de confirmacao para iniciar o backup dos arquivos gerais
+    read -p "Confirma o backup dos arquivos do(s) mes(es) '$meses_input' do ano '20$ano'? (S/N)" confirma_backups
+
+    # Verifica se a entrada foi 'S' ou 's' para iniciar o backup, do contrario volta ao menu principal
+    if [[ $confirma_backups =~ ^[Ss]$ ]]; then
+    echo "Iniciando Backup..."
+
+        # Loop para compactar os arquivos correspondentes a cada data fornecida
+        for mes in "${meses[@]}"; do
+            echo "Sera compactado os arquivos que contenham o(s) mes(es) '$meses_input' e o ano '$ano'."
+            # Constrói o padrão para a data no formato MMAA
+            padrao_mmaa="$mes$ano"
+            rar a "$nome_bkp" "sist/arqf/*${padrao_mmaa}*"          # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
+            # Constrói o padrão para a data no formato AAMM
+            padrao_aamm="$ano$mes"
+            rar a "$nome_bkp" "sist/arqf/*${padrao_aamm}*"     
+            rar a "$nome_bkp" "sist/arqm/mv${padrao_aamm}*"         # movimento
+            rar a "$nome_bkp" "sist/arqf/gnren${padrao_aamm}*"      # gnre
+            rar a "$nome_bkp" "sist/arqi/es*${padrao_aamm}*"        # inventario
+            rar a "$nome_bkp" "sist/arqi/in*${padrao_aamm}*"        # inventario
+            rar a "$nome_bkp" "sist/sped/obs${padrao_aamm}*"        # observacao
+            rar a "$nome_bkp" "sist/sped/ajitens${padrao_aamm}*"    # ajuste
+            rar a "$nome_bkp" "sist/sped/apu*${padrao_aamm}*"       # apuracao
+            rar a "$nome_bkp" "sist/arqv/*${padrao_aamm}*"          # vendas cf
+            echo "Backup do(s) arquivo(s) do(s) mes(es) '$meses_input' do ano '20$ano' concluido! O nome do backup usado foi '$nome_bkp' "
+            echo "Caso deseje realizar mais algum backup utilize o 'Menu' novamente!"
+        done
+
+    elif [[ $confirma_backups =~ ^[Nn]$ ]]; then
+        clear
+        echo "Retornando ao menu..."
+        
+    else
+        echo "Entrada invalida. Por favor, confirme com 'S' ou 'N'."
+    fi
+    
 }
 
 # Funcao para executar backup Arquivos
