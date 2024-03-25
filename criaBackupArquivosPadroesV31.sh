@@ -2,11 +2,26 @@
 #
 # criaBackupArquivosPadroes.sh - Cria backup de principais arquivos do cliente
 #
-# DATA: 18/03/2024 07:15
+# DATA: 18/03/2024 07:15 - Versão 1
+# ------------------------------------------------------------------------------
+# UPDATE E MODIFICAÇÕES
+# DATA: 25/03/2024 09:00 - Updates para versão 3.0.2
+# ------------------------------------------------------------------------------
 # Autor:    Luiz Gustavo <luiz.gustavo@avancoinfo.com.br>
 # Co-Autor: Fabio Silva
-# Melhoria de Menu e opcoes: Luiz Gustavo
-# Versao: 3.0.2
+#
+# Versão 1: Compactava todos arquivos somente com uma opção de mês e ano
+# Versão 2: Opção de selecionar mais de um mês para criar o backup
+# Versão 3: Melhoria de menu e opções para backup, podendo realizar backup's
+#           de mais meses e até outros anos caso necessário, além de escolher
+#           criar os backups de forma separada, podendo compactar somente os
+#           arquivos que tem MMAA e AAMM no nome, os arquivos sem data ou ambos
+# Versão 3.0.2 : Adicionado confirmações ao programa, para exitar que seja ini-
+#                ciado o backup sem confirmar o que foi escolhido
+# Versão 3.1.0 : Adicionando opções melhores para o manual com o comando --help
+#                e opção para ver a versão atual com o --version
+#
+#
 #
 # ------------------------------------------------------------------------------
 # Este programa recebe um nome para o arquivo que será criado como backup de
@@ -32,8 +47,57 @@
 #
 #
 #
+
+
 # Limpa o terminal putty, para iniciar o menu no topo
 clear
+
+# Tratamento das opções de linha de comando
+if test "$1" = "-h"
+then
+    echo "$MENSAGEM_USO"
+    exit 0
+elif test "$1" = "-V"
+then
+    grep '^# Versão ' "$0" | tail -1 | cut -d : -f 1 | tr -d \#
+    exit 0
+fi
+
+
+# Tratamento das opções de linha de comando
+case "$1" in
+    -h | --help)
+        echo "$MENSAGEM_USO"
+        exit 0
+    ;;
+    -V | --version)
+        echo -n $(basename "$0")
+        # Extrai a versão diretamente dos cabeçalhos do programa
+        grep '^# Versão ' "$0" | tail -1 | cut -d : -f 1 | tr -d \#
+        exit 0
+    ;;
+    *)
+        if test -n "$1"
+        then
+            echo Opção inválida: $1
+            exit 1
+        fi
+    ;;
+esac
+
+MENSAGEM_USO=echo "
+Uso: $(basename "$0") [OPÇÕES]
+
+echo Teste
+
+OPÇÕES:
+  -h, --help      Mostra esta tela de ajuda e sai
+  -V, --version   Mostra a versão do programa e sai
+"
+
+
+# Resto do seu script...
+
 
 # Funcao para exibir o menu
 display_menu() {
@@ -46,7 +110,7 @@ display_menu() {
     echo "|    [M]eses     : backup dos arquivos de mes e ano     |"
     echo "|    [H]elp      : acessar o menu de ajuda              |"
     echo "|    [L]istar    : listar arquivos                      |"
-    echo "|    [E]xit      : Sair do script                       |"
+    echo "|    [S]air      : Sair do script                       |"
     echo "|_______________________________________________________|"
 }
 
@@ -340,7 +404,7 @@ do_something() {
             backup_meses
             display_menu
             ;;
-        "A"|"a")
+        "H"|"h")
             clear
             display_manual
             ;;
