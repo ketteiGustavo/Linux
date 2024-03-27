@@ -2,80 +2,80 @@
 #
 # criaBackupArquivosPadroes.sh - Cria backup de principais arquivos do cliente
 #
-# DATA: 18/03/2024 07:15 - Versão 1
+# DATA: 18/03/2024 07:15 - Versao 1
 # ------------------------------------------------------------------------------
-# UPDATE E MODIFICAÇÕES
-# DATA: 25/03/2024 09:00 - Updates para versão 3.0.2
+# UPDATE E MODIFICACOES
+# DATA: 25/03/2024 09:00 - Updates para versao 3.1.0
 # ------------------------------------------------------------------------------
 # Autor:    Luiz Gustavo <luiz.gustavo@avancoinfo.com.br>
-# Co-Autor: Fabio Silva
+# Co-Autor: Fabio Silva <fabio.silva@avancoinfo.com.br>
 #
-# Versão 1: Compactava todos arquivos somente com uma opção de mês e ano
-# Versão 2: Opção de selecionar mais de um mês para criar o backup
-# Versão 3: Melhoria de menu e opções para backup, podendo realizar backup's
-#           de mais meses e até outros anos caso necessário, além de escolher
+# Versao 1: Compactava todos arquivos somente com uma opcao de mes e ano
+# Versao 2: Opcao de selecionar mais de um mes para criar o backup
+# Versao 3: Melhoria de menu e opcoes para backup, podendo realizar backup's
+#           de mais meses e ate outros anos caso necessario, alem de escolher
 #           criar os backups de forma separada, podendo compactar somente os
 #           arquivos que tem MMAA e AAMM no nome, os arquivos sem data ou ambos
-# Versão 3.0.2 : Adicionado confirmações ao programa, para exitar que seja ini-
+# Versao 3.0.2 : Adicionado confirmacoes ao programa, para evitar que seja ini-
 #                ciado o backup sem confirmar o que foi escolhido
-# Versão 3.1.0 : Adicionando opções melhores para o manual com o comando --help
-#                e opção para ver a versão atual com o --version
+# Versao 3.1.0 : Adicionando opcoes melhores para o manual com o comando --help
+#                e opcao para ver a versao atual com o --version
 #
 #
 #
 # ------------------------------------------------------------------------------
-# Este programa recebe um nome para o arquivo que será criado como backup de
-# acordo com o informado pelo usuário, e irá compactar os arquivos mais comuns
-# que são necessários para realizar testes e validações internas. Favor comuni-
+# Este programa recebe um nome para o arquivo que sera criado como backup de
+# acordo com o informado pelo usuario, e ira compactar os arquivos mais comuns
+# que sao necessarios para realizar testes e validacoes internas. Favor comuni-
 # car ao clienter a necessidade de trazer os arquivos para que seja enviado o
 # e-mail solicitando o acesso aos arquivos do servidor do cliente.
 # ------------------------------------------------------------------------------
-# Caso necessite de algum arquivo que não se encontra na lista dos que estão dis-
-# poníveis nesse script, por favor nos acione que iremos adicionar par que possa
-# facilitar cada vez mais a sua utilização.
+# Caso necessite de algum arquivo que nao se encontra na lista dos que estao dis-
+# poniveis nesse script, por favor nos acione que iremos adicionar para que 
+# possa facilitar cada vez mais a sua utilizacao.
 #
 #
 #
-#
-#
-#
-#
-#
+# Agradecimentos ao Fabio Silva e o Alan Gurgel que me apoiaram na criacao desse
+# programa para facilitar o backup dos arquivos.
+
 
 
 # Limpa o terminal putty, para iniciar o menu no topo
 clear
 
 MENSAGEM_USO="
-Uso: $(basename "$0") [OPÇÕES]
+Uso: $(basename "$0") [OPCOES]
 
-OPÇÕES:
+OPCOES:
   -h, --help      Mostra esta tela de ajuda e sai
-  -V, --version   Mostra a versão do programa e sai
+  -V, --version   Mostra a versao do programa e sai
 
   Usando o programa de backup:
-    Ao entrar no script irá se deparar com o menu principal. Deverá escolher as
-    opções de acordo com a Letra entre []. O programa irá reconhecer tanto letras
-    maiusculas quanto letras minusculas.
-    Vamos a um exemplo o usuário irá realizar o backup dos arquivos que tem as
-    opções de data em seu nome, exemplo do arquivo: mv2403 que está no diretório
-    /u/sist/arqm/mvAAMM. Foi feito uma variavél que irá colocar a data (ano e mes)
-    que deseja na busca antes da compactação.
+    Ao entrar no script ira se deparar com o menu principal. Devera escolher as
+    opcoes de acordo com a Letra entre []. O programa ira reconhecer tanto
+    letras maiusculas quanto letras minusculas.
+    Vamos a um exemplo o usuario ira realizar o backup dos arquivos que tem as
+    opcoes de data em seu nome, exemplo do arquivo: mv2403 que esta no diretorio
+    /u/sist/arqm/mvAAMM. Foi feito uma variavel que ira colocar a data
+    (ano e mes) que deseja na busca antes da compactacao.
+    Caso tenha mais duvida quanto a utilizacao, acessar o menu [H]elp dentro 
+    do programa.
 "
 
-# Tratamento das opções de linha de comando
+# Tratamento das opcoes de linha de comando
 if test "$1" = "-h"
 then
     echo "$MENSAGEM_USO"
     exit 0
 elif test "$1" = "-V"
 then
-    grep '^# Versão ' "$0" | tail -1 | cut -d : -f 1 | tr -d \#
+    grep '^# Versao ' "$0" | tail -1 | cut -d : -f 1 | tr -d \#
     exit 0
 fi
 
 
-# Tratamento das opções de linha de comando
+# Tratamento das opcoes de linha de comando
 case "$1" in
     -h | --help)
         echo "$MENSAGEM_USO"
@@ -84,14 +84,14 @@ case "$1" in
     ;;
     -V | --version)
         echo -n $(basename "$0")
-        # Extrai a versão diretamente dos cabeçalhos do programa
-        grep '^# Versão ' "$0" | tail -1 | cut -d : -f 1 | tr -d \#
+        # Extrai a versao diretamente dos cabecalhos do programa
+        grep '^# Versao ' "$0" | tail -1 | cut -d : -f 1 | tr -d \#
         exit 0
     ;;
     *)
         if test -n "$1"
         then
-            echo Opção inválida: $1
+            echo Opcao invalida: $1
             exit 1
         fi
     ;;
@@ -115,48 +115,48 @@ DISPLAY_MENU() {
 
 # Funcao para exibir o manual
 DISPLAY_MANUAL() {
-    echo "Manual de utilização:"
-    echo "Opções disponíveis:"
+    echo "Manual de utilizacao:"
+    echo "Opcoes disponiveis:"
     echo "  [I]nicio    : Voltar ao menu principal"
     echo "  [T]otal     : Realizar backup total (faz o backup de todos os \
-arquivos de acordo com a programação do script)"
+arquivos de acordo com a programacao do script)"
     echo "  [P]arcial   : Realizar backup dos arquivos (faz o backup dos \
 arquivos previamente configurados)"
     echo "  [M]eses     : Realizar backup dos arquivos de meses (faz o backup \
-dos arquivos com datas específicas)"
+dos arquivos com datas especificas)"
     echo "  [H]elp      : Exibir o menu de ajuda (mostra este menu novamente)"
-    echo "  [L]istar    : Listar a lista completa dos arquivos que são \
-compactados na execução desse script."
-    echo "  [S]air      : Sair do script (encerra a execução do script)"
+    echo "  [L]istar    : Listar a lista completa dos arquivos que sao \
+compactados na execucao desse script."
+    echo "  [S]air      : Sair do script (encerra a execucao do script)"
     echo ""
     echo "Exemplos de uso:"
     echo "--------------------------------------------------------------------------"
-    echo "  Para realizar um backup total, acesse a opção do menu com a letra \
-'T' e informe um nome que deseja utilizar para identificar o backup! Após \
-isso será iniciado a validação das datas para os arquivos que contém datas \
+    echo "  Para realizar um backup total, acesse a opcao do menu com a letra \
+'T' e informe um nome que deseja utilizar para identificar o backup! Apos \
+isso sera iniciado a validacao das datas para os arquivos que contem datas \
 no nome, podendo assim escolher determinados meses de um ano."
     echo "--------------------------------------------------------------------------"
-    echo "  Para realizar um backup parcial, acesse a opção do menu com a letra \
+    echo "  Para realizar um backup parcial, acesse a opcao do menu com a letra \
 'P' e informe um nome que deseja utilizar para identificar o backup!"
     echo "--------------------------------------------------------------------------"
-    echo "  Para realizar um backup de arquivos de um mês específico, acesse a \
-opção do menu com a letra 'M', informe um nome que deseja utilizar para \
-identificar o backup e prossiga com a validação das datas dos arquivos. Será \
-perguntando quantos meses deseja utilizar, informe até 3 meses por backup, \
-respeitando o padrão com dois digitos. Ex.: 'Quantos meses deseja compactar \
+    echo "  Para realizar um backup de arquivos de um mes especifico, acesse a \
+opcao do menu com a letra 'M', informe um nome que deseja utilizar para \
+identificar o backup e prossiga com a validacao das datas dos arquivos. Sera \
+perguntando quantos meses deseja utilizar, informe ate 3 meses por backup, \
+respeitando o padrao com dois digitos. Ex.: 'Quantos meses deseja compactar \
 (ate 3 meses)?'. 3 'Digite o(s) mes(es) (MM MM MM) que deseja compactar... \
-01 02 03.'. Após informe o ano que deseja usar. 'Ex.: Digite o ano que deseja \
-usar (apenas 2 digitos):' 19 Dessa forma será realizado o backup dos arquivos \
-que tenham as combinações de 0119 0219 0319 ou 1901 1902 1903 no nome. Caso \
-seja informado qualquer padrão inválido durante a utilização do backup, \
-será retornado uma mensagem de aviso na tela para o usuário"
+01 02 03.'. Apos informe o ano que deseja usar. 'Ex.: Digite o ano que deseja \
+usar (apenas 2 digitos):' 19 Dessa forma sera realizado o backup dos arquivos \
+que tenham as combinacoes de 0119 0219 0319 ou 1901 1902 1903 no nome. Caso \
+seja informado qualquer padrao invalido durante a utilizacao do backup, \
+sera retornado uma mensagem de aviso na tela para o usuario"
     echo "--------------------------------------------------------------------------"
-    echo "  Para listar os arquivos que serão compactados, acesse a opção do \
-menu com a letra 'L'. Caso necessite de algum outro arquivo que não se \
-encontra nesse programa, por favor execute a compactação manual e nos \
-informe posteriormente para adicionar na próxima versão"
-    echo "  Para exibir o menu de ajuda, acesse a pção do menu com a letra 'H'"
-    echo "  Para sair do script, aperte a letra 'S'. Será necessário confirmar \
+    echo "  Para listar os arquivos que serao compactados, acesse a opcao do \
+menu com a letra 'L'. Caso necessite de algum outro arquivo que nao se \
+encontra nesse programa, por favor execute a compactacao manual e nos \
+informe posteriormente para adicionar na proxima versao"
+    echo "  Para exibir o menu de ajuda, acesse a pcao do menu com a letra 'H'"
+    echo "  Para sair do script, aperte a letra 'S'. Sera necessario confirmar \
 que deseja sair novamente."
     echo ""
     echo ""
@@ -178,7 +178,7 @@ DEFINIR_NOME(){
                 ;;
             "n"|"N")
                 ;;
-            *)  # Opção padrão caso nenhuma correspondência seja encontrada
+            *)  # Opcao padrao caso nenhuma correspondencia seja encontrada
             echo "Entrada invalida. Por favor, confirme com 'S' ou 'N'."
             ;;
         esac
@@ -186,7 +186,7 @@ DEFINIR_NOME(){
 }
 
 # Funcao para listar os nomes e caminhos dos arquivos que serao realizados os backups
-listar_arquivos(){
+LISTAR_ARQUIVOS(){
     echo "diretorios"
     echo "/u/arq/*"
     echo "/u/arq/sp01*03"
@@ -258,7 +258,7 @@ BACKUP_MESES(){
         fi
     done
 
-    # Pergunta ao usuario quais meses deseja usar, separados por espaço e confirma o que foi digitado
+    # Pergunta ao usuario quais meses deseja usar, separados por espaco e confirma o que foi digitado
     while true; do
 
         read -p "Digite o(s) mes(es) (MM MM MM) que deseja compactar (ate '$quantidade_meses' mes(es)): " meses_input
@@ -294,7 +294,7 @@ BACKUP_MESES(){
                         clear
                         echo "Digite novamente o(s) mes(es). "
                         ;;
-                    *)  # Opção padrão caso nenhuma correspondência seja encontrada
+                    *)  # Opcao padrao caso nenhuma correspondencia seja encontrada
                         echo "Entrada invalida. Por favor, confirme com 'S' ou 'N'."
                         ;;
                 esac
@@ -302,7 +302,7 @@ BACKUP_MESES(){
         fi
     done
 
-    # Pergunta ao usuario qual ano deseja usar (limitado a 2 dígitos)
+    # Pergunta ao usuario qual ano deseja usar (limitado a 2 digitos)
     while true; do
     read -p "Digite o ano que deseja usar (apenas 2 digitos): " ano
     # Verifica se o ano fornecido tem exatamente 2 digitos
@@ -326,10 +326,10 @@ BACKUP_MESES(){
         # Loop para compactar os arquivos correspondentes a cada data fornecida
         for mes in "${meses[@]}"; do
             echo "Sera compactado os arquivos que contenham o(s) mes(es) '$meses_input' e o ano '$ano'."
-            # Constrói o padrão para a data no formato MMAA
+            # Constroi o padrao para a data no formato MMAA
             padrao_mmaa="$mes$ano"
             rar a "$NOME_BKP" "sist/arqf/*${padrao_mmaa}*"          # fiscal  --- livros fiscais (fsLLMMAA, leLLMMAA, mpLLMMAA, alLLMMAA)
-            # Constrói o padrão para a data no formato AAMM
+            # Constroi o padrao para a data no formato AAMM
             padrao_aamm="$ano$mes"
             rar a "$NOME_BKP" "sist/arqf/*${padrao_aamm}*"     
             rar a "$NOME_BKP" "sist/arqm/mv${padrao_aamm}*"         # movimento
@@ -417,14 +417,9 @@ BACKUP_ARQUIVOS(){
 # Funcao que executa uma acao com base no valor passado
 do_something() {
     case $1 in
-        "A"|"a")
-            echo "Menu de adicionar novo arquivo a rotina de backup"
-            # Chama a função de Adicionar um novo arquivo
-            ADICIONAR_NOVO_ARQUIVO
-            ;;
         "T"|"t")
             echo "Realizando backup da configuracao programada no script..."
-            # Chama as funções de backups configuradas no script
+            # Chama as funcoes de backups configuradas no script
             DEFINIR_NOME
             BACKUP_MESES
             BACKUP_ARQUIVOS
@@ -455,7 +450,7 @@ do_something() {
             ;;
         "L"|"l")
             clear
-            listar_arquivos
+            LISTAR_ARQUIVOS
             DISPLAY_MENU
             ;;
         "S"|"s")
@@ -473,41 +468,16 @@ do_something() {
                 echo "Opcao digitada invalida. Por favor, confirme com 'S' ou 'N'."
             fi
             ;;
-        *)  # Opção padrão caso nenhuma correspondência seja encontrada
+        *)  # Opcao padrao caso nenhuma correspondencia seja encontrada
             echo "Opcao invalida"
             ;;
     esac
 }
 
-# Funcao para adicionar um novo arquivo ao backup
-ADICIONAR_NOVO_ARQUIVO() {    
-    read -p "Por favor, insira o diretório do arquivo: " diretorio
-    read -p "Por favor, insira o nome do arquivo:" nome
-
-    # Verifica se o arquivo existe
-    if [ ! -f "$diretorio/$nome" ]; then
-        echo "O arquivo não existe no diretório informado."
-        return 1
-    fi
-
-    # Verifica se o nome do arquivo contém MMAA ou AAMM
-    if [[ $nome =~ [0-9]{4} ]]; then
-        # Adiciona o arquivo à função BACKUP_MESES
-        BACKUP_MESES "$diretorio/$nome"
-    else
-        # Adiciona o arquivo à função BACKUP_ARQUIVOS
-        BACKUP_ARQUIVOS "$diretorio/$nome"
-    fi
-
-    # Adiciona o arquivo à função listar_arquivos
-    listar_arquivos "$diretorio/$nome"
-}
-
-
 # Exibir menu ao usuario
 DISPLAY_MENU
 
-# Loop para solicitar uma opção valida do usuario
+# Loop para solicitar uma opcao valida do usuario
 while true; do
     read -p "Digite a opcao do menu que deseja acessar: " opcao
     do_something "$opcao"
