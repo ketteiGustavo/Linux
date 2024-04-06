@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Constantes
-readonly DOWNLOAD_DIR="$HOME/Downloads/programas"
+readonly DOWNLOAD_DIR="/home/$USER/Downloads/programas"
 readonly CONFIG_FILE="/home/$USER/.config/gtk-3.0/bookmarks"
 
 # Cores
@@ -29,9 +29,25 @@ check_internet() {
   fi
 }
 
+# Verifica a acessibilidade das URLs
+check_urls() {
+  local urls=("$URL_GOOGLE_CHROME" "$URL_4K_VIDEO_DOWNLOADER" "$URL_INSYNC" "$URL_SYNOLOGY_DRIVE" "$URL_VSCODE")
+  for url in "${urls[@]}"; do
+    if ! curl --output /dev/null --silent --head --fail "$url"; then
+      error_msg "A URL $url não está acessível. Verifique a conexão com a Internet e tente novamente."
+      exit 1
+    fi
+  done
+}
+
+
 # Atualiza o repositório e faz atualização do sistema
 update_system() {
   sudo apt update && sudo apt dist-upgrade -y
+  if [ $? -ne 0 ]; then
+    error_msg "Falha ao atualizar o sistema. Verifique sua conexão com a Internet e tente novamente."
+    exit 1
+  fi
 }
 
 # Adiciona arquitetura de 32 bits
@@ -44,13 +60,17 @@ add_archi386() {
 install_debs() {
   info_msg "Baixando pacotes .deb"
   mkdir -p "$DOWNLOAD_DIR"
-  wget -c "$URL_GOOGLE_CHROME" -P "$DOWNLOAD_DIR"
-  wget -c "$URL_4K_VIDEO_DOWNLOADER" -P "$DOWNLOAD_DIR"
-  wget -c "$URL_INSYNC" -P "$DOWNLOAD_DIR"
-  wget -c "$URL_SYNOLOGY_DRIVE" -P "$DOWNLOAD_DIR"
-
+  for url in "$URL_GOOGLE_CHROME" "$URL_4K_VIDEO_DOWNLOADER" "$URL_INSYNC" "$URL_SYNOLOGY_DRIVE" "$URL_VSCODE"; do
+    wget -c "$url" -P "$DOWNLOAD_DIR" || {
+      error_msg "Falha ao baixar $url. Verifique a conexão com a Internet e tente novamente."
+      exit 1
+    }
+  done
   info_msg "Instalando pacotes .deb baixados"
-  sudo dpkg -i "$DOWNLOAD_DIR"/*.deb
+  sudo dpkg -i "$DOWNLOAD_DIR"/*.deb || {
+    error_msg "Falha ao instalar pacotes .deb. Verifique os pacotes baixados e tente novamente."
+    exit 1
+  }
 }
 
 # Instala pacotes do apt
@@ -86,7 +106,7 @@ clean_system() {
 # Configurações extras
 extra_config() {
   info_msg "Configurando pastas extras"
-  mkdir -p /home/"$USER"/{TEMP,EDITAR,Resolve,AppImage,"Vídeos/OBS Rec"}
+  mkdir -p /home/"$USER"/{TEMP,EDITAR,Resolve,AppImage,"Videos/OBS_Rec"}
   if [ ! -f "$CONFIG_FILE" ]; then
     touch "$CONFIG_FILE"
   fi
@@ -99,6 +119,7 @@ extra_config() {
 # Main
 main() {
   check_internet
+  check_urls
   update_system
   add_archi386
   install_debs
@@ -106,18 +127,31 @@ main() {
   install_flatpaks
   install_snaps
   extra_config
+  extras_terminal
   clean_system
+  configure_aliases
+  configure_second_monitor
 
   info_msg "Script finalizado, instalação concluída! :)"
 }
 
+
+
 # Define URLs e pacotes a serem instalados
-readonly URL_GOOGLE_CHROME="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-readonly URL_4K_VIDEO_DOWNLOADER="https://dl.4kdownload.com/app/4kvideodownloader_4.20.0-1_amd64.deb?source=website"
-readonly URL_INSYNC="https://d2t3ff60b2tol4.cloudfront.net/builds/insync_3.7.2.50318-impish_amd64.deb"
-readonly URL_SYNOLOGY_DRIVE="https://global.download.synology.com/download/Utility/SynologyDriveClient/3.0.3-12689/Ubuntu/Installer/x86_64/synology-drive-client-12689.x86_64.deb"
+URL_GOOGLE_CHROME="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+URL_4K_VIDEO_DOWNLOADER="https://dl.4kdownload.com/app/4kvideodownloader_4.20.0-1_amd64.deb?source=website"
+URL_INSYNC="https://cdn.insynchq.com/builds/linux/insync_3.8.7.50516-noble_amd64.deb"
+URL_SYNOLOGY_DRIVE="https://global.download.synology.com/download/Utility/SynologyDriveClient/3.0.3-12689/Ubuntu/Installer/x86_64/synology-drive-client-12689.x86_64.deb"
+URL_VSCODE="'https://go.microsoft.com/fwlink/?LinkID=760868' -O vscode.deb"
+URL_ZOOM="https://zoom.us/client/5.17.11.3835/zoom_amd64.deb"
+
+
+
 readonly APT_PACKAGES=(
+  -f
   snapd
+  curl
+  flatpak
   winff
   virtualbox
   ratbagd
@@ -127,7 +161,6 @@ readonly APT_PACKAGES=(
   synaptic
   solaar
   vlc
-  code
   gnome-sushi
   folder-color
   git
@@ -135,6 +168,17 @@ readonly APT_PACKAGES=(
   ubuntu-restricted-extras
   v4l2loopback-utils
   shutter
+  make
+  default-libmysqlclient-dev
+  libssl-dev  
+  build-essential
+  python3.11-full
+  python3.11-dev
+  dkms
+  perl
+  openjdk-17-jdk
+  maven
+  vim
 )
 readonly FLATPAK_APPS=(
   com.obsproject.Studio
@@ -151,7 +195,7 @@ readonly FLATPAK_APPS=(
   org.electrum.electrum
   org.inkscape.Inkscape
   org.kde.kdenlive
-  org.heroicgameslauncher.hgl
+  com.heroicgameslauncher.hgl
   org.upscayl.Upscayl
   org.pulseaudio.pavucontrol
   com.discordapp.Discord
@@ -159,9 +203,59 @@ readonly FLATPAK_APPS=(
   com.sublimetext.three
   io.github.shiftey.Desktop
   org.filezillaproject.Filezilla
-  io.github.jeffshee.Hidamari
   io.github.jorchube.monitorets
+  org.localsend.localsend_app
+  com.bitwarden.desktop
+  org.gnome.Todo
+  com.github.bcedu.valasimplehttpserver
+  org.prismlauncher.PrismLauncher
+  com.github.hluk.copyq
+  net.christianbeier.Gromit-MPX
+  # com.visualstudio.code
 )
+
+extras_terminal(){
+  mkdir -p ~/.fonts
+  git clone https://github.com/pdf/ubuntu-mono-powerline-ttf.git ~/.fonts/ubuntu-mono-powerline-ttf
+  fc-cache -vf
+
+  sudo apt-get install dconf-cli
+  git clone https://github.com/dracula/gnome-terminal
+  cd gnome-terminal
+  ./install.sh
+  
+}
+
+# Função para configurar aliases
+configure_aliases() {
+  # Adicione aqui seus aliases desejados
+  echo "alias ccc='clear'" >> /home/$USER/.bashrc
+  echo "alias ddd='shutdown now'" >> /home/$USER/.bashrc
+  echo "alias att='sudo apt update -y && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoclean -y && sudo apt autoremove -y && alert'" >> /home/$USER/.bashrc
+  echo "alias alert='notify-send --urgency=low -i \"\$(if [ \$? = 0 ]; then echo terminal; else echo error; fi)\" \"\$(history | tail -n1 | sed 's/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//')\"'" >> /home/$USER/.bashrc
+
+}
+
+
+# Função para configurar a resolução do segundo monitor
+configure_second_monitor() {
+  # Adiciona o novo modo
+  xrandr --newmode "1920x1080_60.00"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
+
+  # Adiciona o modo ao segundo monitor (VGA-1 é o nome do dispositivo, ajuste conforme necessário)
+  xrandr --addmode VGA-1 1920x1080_60.00
+
+  # Configura a resolução do segundo monitor para o modo desejado
+  xrandr --output VGA-1 --mode 1920x1080_60.00
+
+  # Adiciona os comandos ao final do arquivo .profile para persistir as configurações
+  echo "" >> /home/$USER/.profile
+  echo "# Configuração da resolução do segundo monitor" >> /home/$USER/.profile
+  echo "xrandr --newmode \"1920x1080_60.00\"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync" >> /home/$USER/.profile
+  echo "xrandr --addmode VGA-1 1920x1080_60.00" >> /home/$USER/.profile
+  echo "xrandr --output VGA-1 --mode 1920x1080_60.00" >> /home/$USER/.profile
+}
+
 
 # Execução principal
 main
