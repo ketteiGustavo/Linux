@@ -209,6 +209,7 @@ readonly FLATPAK_APPS=(
   org.prismlauncher.PrismLauncher
   com.github.hluk.copyq
   net.christianbeier.Gromit-MPX
+  io.github.brunofin.Cohesion
 )
 
 extras_terminal(){
