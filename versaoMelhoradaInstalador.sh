@@ -177,6 +177,8 @@ readonly APT_PACKAGES=(
   openjdk-17-jdk
   maven
   vim
+  nodejs
+  npm
 )
 readonly FLATPAK_APPS=(
   com.obsproject.Studio
@@ -209,6 +211,7 @@ readonly FLATPAK_APPS=(
   org.prismlauncher.PrismLauncher
   com.github.hluk.copyq
   net.christianbeier.Gromit-MPX
+  io.github.brunofin.Cohesion
 )
 
 extras_terminal(){
@@ -251,39 +254,49 @@ main_menu() {
       "Atualizar sistema")
         echo "Atualizando Sistema"
         update_system
+        main_menu
         ;;
       "Adicionar arquitetura de 32 bits")
         echo "Adicionando arquitetura de 32bits"
-        add_archi386
+        configure_aliases
+        configure_second_monitor
+        main_menu
         ;;
       "Instalar pacotes .deb")
         echo "Instalando programas '.debs'"
         install_debs
+        main_menu
         ;;
       "Instalar pacotes do apt")
         echo "Instalando programas via 'Apt'"
         install_apt_packages
+        main_menu
         ;;
       "Instalar pacotes Flatpak")
         echo "Instalando programas via 'Flatpak'"
         install_flatpaks
+        main_menu
         ;;
       "Instalar pacotes Snap")
         echo "Instalando programas via 'Snap'"
         install_snaps
+        main_menu
         ;;
       "Configurações extras")
         echo "Realizando configurações extras"
         configure_aliases
         configure_second_monitor
+        main_menu
         ;;
       "Limpar o sistema")
         echo "Limpando o sistema..."
         clean_system
+        main_menu
         ;;
       "Sair")
         echo "Saindo, até..."
         break
+        exit
         ;;
       *) echo "Opção inválida";;
     esac
