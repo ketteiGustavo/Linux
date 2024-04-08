@@ -177,8 +177,6 @@ readonly APT_PACKAGES=(
   openjdk-17-jdk
   maven
   vim
-  nodejs
-  npm
 )
 readonly FLATPAK_APPS=(
   com.obsproject.Studio
@@ -211,7 +209,6 @@ readonly FLATPAK_APPS=(
   org.prismlauncher.PrismLauncher
   com.github.hluk.copyq
   net.christianbeier.Gromit-MPX
-  io.github.brunofin.Cohesion
 )
 
 extras_terminal(){
