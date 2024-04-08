@@ -177,6 +177,8 @@ readonly APT_PACKAGES=(
   openjdk-17-jdk
   maven
   vim
+  nodejs
+  npm
 )
 readonly FLATPAK_APPS=(
   com.obsproject.Studio
