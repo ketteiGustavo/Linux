@@ -31,7 +31,7 @@ check_internet() {
 
 # Verifica a acessibilidade das URLs
 check_urls() {
-  local urls=("$URL_GOOGLE_CHROME" "$URL_4K_VIDEO_DOWNLOADER" "$URL_INSYNC" "$URL_SYNOLOGY_DRIVE" "$URL_VSCODE")
+  local urls=("$URL_GOOGLE_CHROME" "$URL_VSCODE" "$URL_ZOOM")
   for url in "${urls[@]}"; do
     if ! curl --output /dev/null --silent --head --fail "$url"; then
       error_msg "A URL $url não está acessível. Verifique a conexão com a Internet e tente novamente."
@@ -60,7 +60,7 @@ add_archi386() {
 install_debs() {
   info_msg "Baixando pacotes .deb"
   mkdir -p "$DOWNLOAD_DIR"
-  for url in "$URL_GOOGLE_CHROME" "$URL_4K_VIDEO_DOWNLOADER" "$URL_INSYNC" "$URL_SYNOLOGY_DRIVE" "$URL_VSCODE"; do
+  for url in "$URL_GOOGLE_CHROME" "$URL_ZOOM" "$URL_VSCODE"; do
     wget -c "$url" -P "$DOWNLOAD_DIR" || {
       error_msg "Falha ao baixar $url. Verifique a conexão com a Internet e tente novamente."
       exit 1
@@ -100,7 +100,6 @@ clean_system() {
   flatpak update -y
   sudo apt autoclean -y
   sudo apt autoremove -y
-  nautilus -q
 }
 
 # Configurações extras
@@ -139,16 +138,15 @@ main() {
 
 # Define URLs e pacotes a serem instalados
 URL_GOOGLE_CHROME="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-URL_4K_VIDEO_DOWNLOADER="https://dl.4kdownload.com/app/4kvideodownloader_4.20.0-1_amd64.deb?source=website"
-URL_INSYNC="https://cdn.insynchq.com/builds/linux/insync_3.8.7.50516-noble_amd64.deb"
-URL_SYNOLOGY_DRIVE="https://global.download.synology.com/download/Utility/SynologyDriveClient/3.0.3-12689/Ubuntu/Installer/x86_64/synology-drive-client-12689.x86_64.deb"
+# URL_4K_VIDEO_DOWNLOADER="https://dl.4kdownload.com/app/4kvideodownloader_4.20.0-1_amd64.deb?source=website"
+# URL_INSYNC="https://cdn.insynchq.com/builds/linux/insync_3.8.7.50516-noble_amd64.deb"
+# URL_SYNOLOGY_DRIVE="https://global.download.synology.com/download/Utility/SynologyDriveClient/3.0.3-12689/Ubuntu/Installer/x86_64/synology-drive-client-12689.x86_64.deb"
 URL_VSCODE="'https://go.microsoft.com/fwlink/?LinkID=760868' -O vscode.deb"
 URL_ZOOM="https://zoom.us/client/5.17.11.3835/zoom_amd64.deb"
 
 
 
 readonly APT_PACKAGES=(
-  -f
   snapd
   curl
   flatpak
@@ -170,7 +168,7 @@ readonly APT_PACKAGES=(
   shutter
   make
   default-libmysqlclient-dev
-  libssl-dev  
+  libssl-dev
   build-essential
   python3.11-full
   python3.11-dev
@@ -211,7 +209,6 @@ readonly FLATPAK_APPS=(
   org.prismlauncher.PrismLauncher
   com.github.hluk.copyq
   net.christianbeier.Gromit-MPX
-  # com.visualstudio.code
 )
 
 extras_terminal(){
@@ -232,22 +229,11 @@ configure_aliases() {
   echo "alias ccc='clear'" >> /home/$USER/.bashrc
   echo "alias ddd='shutdown now'" >> /home/$USER/.bashrc
   echo "alias att='sudo apt update -y && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoclean -y && sudo apt autoremove -y && alert'" >> /home/$USER/.bashrc
-  echo "alias alert='notify-send --urgency=low -i \"\$(if [ \$? = 0 ]; then echo terminal; else echo error; fi)\" \"\$(history | tail -n1 | sed 's/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//')\"'" >> /home/$USER/.bashrc
-
 }
 
 
 # Função para configurar a resolução do segundo monitor
 configure_second_monitor() {
-  # Adiciona o novo modo
-  xrandr --newmode "1920x1080_60.00"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
-
-  # Adiciona o modo ao segundo monitor (VGA-1 é o nome do dispositivo, ajuste conforme necessário)
-  xrandr --addmode VGA-1 1920x1080_60.00
-
-  # Configura a resolução do segundo monitor para o modo desejado
-  xrandr --output VGA-1 --mode 1920x1080_60.00
-
   # Adiciona os comandos ao final do arquivo .profile para persistir as configurações
   echo "" >> /home/$USER/.profile
   echo "# Configuração da resolução do segundo monitor" >> /home/$USER/.profile
@@ -255,7 +241,64 @@ configure_second_monitor() {
   echo "xrandr --addmode VGA-1 1920x1080_60.00" >> /home/$USER/.profile
   echo "xrandr --output VGA-1 --mode 1920x1080_60.00" >> /home/$USER/.profile
 }
+# Função para o menu principal
+main_menu() {
+  clear
+  echo "Selecione uma opção:"
+  options=("Atualizar sistema" "Adicionar arquitetura de 32 bits" "Instalar pacotes .deb" "Instalar pacotes do apt" "Instalar pacotes Flatpak" "Instalar pacotes Snap" "Configurações extras" "Limpar o sistema" "Sair")
+  select opt in "${options[@]}"; do
+    case $opt in
+      "Atualizar sistema")
+        echo "Atualizando Sistema"
+        update_system
+        main_menu
+        ;;
+      "Adicionar arquitetura de 32 bits")
+        echo "Adicionando arquitetura de 32bits"
+        configure_aliases
+        configure_second_monitor
+        main_menu
+        ;;
+      "Instalar pacotes .deb")
+        echo "Instalando programas '.debs'"
+        install_debs
+        main_menu
+        ;;
+      "Instalar pacotes do apt")
+        echo "Instalando programas via 'Apt'"
+        install_apt_packages
+        main_menu
+        ;;
+      "Instalar pacotes Flatpak")
+        echo "Instalando programas via 'Flatpak'"
+        install_flatpaks
+        main_menu
+        ;;
+      "Instalar pacotes Snap")
+        echo "Instalando programas via 'Snap'"
+        install_snaps
+        main_menu
+        ;;
+      "Configurações extras")
+        echo "Realizando configurações extras"
+        configure_aliases
+        configure_second_monitor
+        main_menu
+        ;;
+      "Limpar o sistema")
+        echo "Limpando o sistema..."
+        clean_system
+        main_menu
+        ;;
+      "Sair")
+        echo "Saindo, até..."
+        break
+        exit
+        ;;
+      *) echo "Opção inválida";;
+    esac
+  done
+}
 
 
-# Execução principal
-main
+main_menu
