@@ -188,7 +188,7 @@ DEFINIR_NOME(){
 # Funcao para listar os nomes e caminhos dos arquivos que serao realizados os backups
 LISTAR_ARQUIVOS(){
     echo "diretorios"
-    echo "/u/arq/*"
+    echo "/u/arqh/*"
     echo "/u/arq/sp01*03"
     echo "/u/arq/sp01a22*"
     echo "/u/arq/sp01a25*"
@@ -403,6 +403,7 @@ BACKUP_ARQUIVOS(){
     rar a "$NOME_BKP" sist/arqa/sp01z03*        # auxiliar produtos
     rar a "$NOME_BKP" sist/arqd/sp01d01*        # dd prod
     rar a "$NOME_BKP" sist/arqd/sp01o03*        # dd prod
+    rar a "$NOME_BKP" sist/arqd/sp03o69*
     echo "Backup dos arquivos concluido! O nome do backup usado foi '$NOME_BKP'. "
     echo "Caso deseje realizar mais algum backup utilize o 'Menu' novamente!"
     elif [[ $confirma_backup2 =~ ^[Nn]$ ]]; then

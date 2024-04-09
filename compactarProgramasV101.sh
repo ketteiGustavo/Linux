@@ -180,7 +180,7 @@ BACKUP_GNT() {
         # Verifica se o programa existe no diretório DIR40
         if [ -e "$DIR40/$programa.gnt" ]; then
             rar a -ep "$DIRETORIO_SALVO40$prefixo$ID_CARD$sufixo1.rar" "$DIR40/$programa.gnt"
-            chmod +x "$DIRETORIO_SALVO40$ID_CARD$sufixo1.rar"
+            chmod +x "$DIRETORIO_SALVO40$prefixo$ID_CARD$sufixo1.rar"
             info_msg "Compactacao concluida. Pacote '$prefixo$ID_CARD$sufixo1.rar' criado em '$DIRETORIO_SALVO40$ID_CARD$sufixo1.rar'."
         else
             error_msg "Programa '$programa' nao encontrado no diretorio DIR40. Ignorado."
@@ -189,7 +189,7 @@ BACKUP_GNT() {
         # Verifica se o programa existe no diretório DIR41
         if [ -e "$DIR41/$programa.gnt" ]; then
             rar a -ep "$DIRETORIO_SALVO41$prefixo$ID_CARD$sufixo2.rar" "$DIR41/$programa.gnt"
-            chmod +x "$DIRETORIO_SALVO41$ID_CARD$sufixo2.rar"
+            chmod +x "$DIRETORIO_SALVO41$prefixo$ID_CARD$sufixo2.rar"
             info_msg "Compactacao concluida. Pacote '$prefixo$ID_CARD$sufixo2.rar' criado em '$DIRETORIO_SALVO41$ID_CARD$sufixo2.rar'."
         else
             error_msg "Programa '$programa' nao encontrado no diretorio DIR41. Ignorado."
