@@ -1,13 +1,14 @@
 #!/bin/bash
 #
-# compactarPacotes.sh - Cria um pacote com os programas que foram compilados
-# 
-# DATA: 08/04/2024 21:33 - Versao 1
+# compactarProgramasV101.sh - Cria um pacote com os programas que foram compilados
+#
+# DATA: 08/04/2024 21:33 - Versao 1.0.1
 # ---------------------------------------------------------------------------
 # Autor: Luiz Gustavo <luiz.gustavo@avancoinfo.com.br>
 # ---------------------------------------------------------------------------
-# Versao 1: Compacta programas informados pelo usuario de acordo com o ID card informado
-#
+# Versao 1: Compacta programas informados pelo usuario de acordo com o ID card
+# informado
+# Versao 1.0.1: Altera a forma de leitura dos programas, puxando pelo Card
 #
 # ---------------------------------------------------------------------------
 # Este programa ira compactar os programas respeitando a versao do cobol
@@ -20,6 +21,7 @@ DIR41="/u/envio/exec"
 
 DIRETORIO_SALVO40="/u/envio/compacta/novocobol/"
 DIRETORIO_SALVO41="/u/envio/compacta/liberadas/"
+prefixo="ID"
 
 # Limpa o terminal putty, para iniciar o menu no topo
 clear
@@ -33,9 +35,9 @@ OPCOES:
 
   Usando o programa de backup:
     Ao entrar no programa ira se deparar com o menu principal.Devera escolher as
-    opcoes de acordo com o numero 1 - fazer backup ou 2 - sair.
-    O programa aceita varios '.gnt', portanto adicione de acordo com a sua neces
-    sidade. 
+    opcoes de acordo com o numero 1 - fazer compactacao ou 2 - sair.
+    A rotina ira ler de acordo com o Card informado os programas que foram com-
+    pilados.
 "
 
 # Tratamento das opcoes de linha de comando
@@ -89,8 +91,6 @@ info_msg() {
 # Funcao para definir o nome do .rar usando o ID do card
 DEFINIR_ID(){
     while true; do
-        #definindo prefixo
-        prefixo="ID"
         # Pergunta ao usuario qual o ID do card
         read -p "Informe o numero do card: " ID_CARD
 
@@ -100,7 +100,7 @@ DEFINIR_ID(){
         case $confirma_id in
             "S"|"s")
                 info_msg "CARD '$prefixo$ID_CARD' confirmado para criar o pacote"
-                ID_CARD="$prefixo$ID_CARD"
+                ID_CARD=$ID_CARD
                 return 0
                 ;;
             "N"|"n")
@@ -112,39 +112,50 @@ DEFINIR_ID(){
     done
 }
 
-# Funcao para ler os nomes dos programas
-INFORMAR_GNT(){
-    programas=()  # Inicializa o array programas
-    while true; do
-        read -p "Digite o nome do programa, ou ENTER para continuar: " entrada
-        if [ -z "$entrada" ]; then
-            # Verifica se há programas informados
-            if [ ${#programas[@]} -eq 0 ]; then
-                echo "Nenhum programa foi informado."
-                continue
-            fi
-            # Exibe os programas informados pelo usuário
-            echo "Programas informados para backup:"
-            for programa in "${programas[@]}"; do
-                echo "$programa"
-            done
-            # Pergunta ao usuário se deseja informar mais programas
-            read -p "Deseja informar mais algum programa? (S/N): " continuar
-            case $continuar in
-                [Ss]*)
-                    continue ;;
-                [Nn]*)
-                    # Inicia o processo de backup
-                    BACKUP_GNT
-                    break ;;
-                *)
-                    echo "Entrada invalida. Por favor, responda com 'S' ou 'N'." ;;
-            esac
-        else
-            programas+=("$entrada")  # Adiciona o nome do programa ao array programas
-        fi
+
+# Função para ler os programas do Card informado
+LER_GNT(){
+    # Define o nome do arquivo temporário
+    ARQTMP="/tmp/$ID_CARD.txt"
+
+    # Executa o comando para obter os programas do cartão e salva no arquivo temporário
+    curl -s -X 'GET' "https://avanoinformticaltda.kanbanize.com/api/v2/cards/$ID_CARD" \
+    -H 'accept: application/json' -H 'apikey: StoAGNyzFPNw0Pc8Lok4rquCMNDxHPekF6F3fb5U' \
+    | grep -oP '\w+\.cbl' | sed 's/\.cbl$//' > "$ARQTMP"
+    
+    # Verifica se o arquivo temporário foi criado e se está vazio
+    if [ ! -s "$ARQTMP" ]; then
+        echo "Nenhum programa foi encontrado."
+        return
+    fi
+
+    # Lê os programas do arquivo temporário
+    programas=($(< "$ARQTMP"))
+
+    # Exibe os programas na tela para confirmação
+    echo "Programas encontrados para compactacao:"
+    for programa in "${programas[@]}"; do
+        echo "$programa"
     done
+
+    # Pergunta ao usuário se deseja continuar
+    read -p "Deseja prosseguir com a compactacao do(s) programa(s) listado(s) acima? (S/N): " continuar
+    case $continuar in
+        [Ss]*)
+            # Inicia o processo de backup
+            BACKUP_GNT ;;
+        [Nn]*)
+            echo "Operacao cancelada." ;;
+        *)
+            echo "Entrada invalida. Por favor, responda com 'S' ou 'N'." ;;
+    esac
+
+    # Remove o arquivo temporário
+    rm -f "$ARQTMP"
 }
+
+
+
 
 # Funcao para realizar backup de acordo com os programas informados
 BACKUP_GNT() {
@@ -168,18 +179,18 @@ BACKUP_GNT() {
     for programa in "${programas[@]}"; do
         # Verifica se o programa existe no diretório DIR40
         if [ -e "$DIR40/$programa.gnt" ]; then
-            rar a "$DIRETORIO_SALVO40$ID_CARD$sufixo1.rar" "$DIR40/$programa.gnt"
+            rar a -ep "$DIRETORIO_SALVO40$prefixo$ID_CARD$sufixo1.rar" "$DIR40/$programa.gnt"
             chmod +x "$DIRETORIO_SALVO40$ID_CARD$sufixo1.rar"
-            info_msg "Backup concluido. Pacote '$ID_CARD$sufixo1.rar' criado em '$DIRETORIO_SALVO40$ID_CARD$sufixo1.rar'."
+            info_msg "Compactacao concluida. Pacote '$prefixo$ID_CARD$sufixo1.rar' criado em '$DIRETORIO_SALVO40$ID_CARD$sufixo1.rar'."
         else
             error_msg "Programa '$programa' nao encontrado no diretorio DIR40. Ignorado."
         fi
 
         # Verifica se o programa existe no diretório DIR41
         if [ -e "$DIR41/$programa.gnt" ]; then
-            rar a "$DIRETORIO_SALVO41$ID_CARD$sufixo2.rar" "$DIR41/$programa.gnt"
+            rar a -ep "$DIRETORIO_SALVO41$prefixo$ID_CARD$sufixo2.rar" "$DIR41/$programa.gnt"
             chmod +x "$DIRETORIO_SALVO41$ID_CARD$sufixo2.rar"
-            info_msg "Backup concluido. Pacote '$ID_CARD$sufixo2.rar' criado em '$DIRETORIO_SALVO41$ID_CARD$sufixo2.rar'."
+            info_msg "Compactacao concluida. Pacote '$prefixo$ID_CARD$sufixo2.rar' criado em '$DIRETORIO_SALVO41$ID_CARD$sufixo2.rar'."
         else
             error_msg "Programa '$programa' nao encontrado no diretorio DIR41. Ignorado."
         fi
@@ -196,7 +207,9 @@ MENU(){
         case $opt in
             "Compactar programa(s)")
                 DEFINIR_ID
-                INFORMAR_GNT
+                LER_GNT
+                break
+                exit
                 ;;
             "Sair")
                 info_msg "Saindo..."
