@@ -152,8 +152,6 @@ END
 
     CAMINHO_ARQUIVO="$PASTA_DESTINO/$NOME_PROGRAMA"
 
-	#awk 'NR==1,/^###############################/{print}' <<< "$HEADER" | sed '/^###############################/d' > "$CAMINHO_ARQUIVO"
-
     echo "$HEADER" > "$CAMINHO_ARQUIVO"
 
     chmod +x "$CAMINHO_ARQUIVO"
