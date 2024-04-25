@@ -3,7 +3,7 @@
 ################################################################################
 # cabecalhoPadrao.sh - Criador de cabecalhos Padroes para Shell Script
 #
-# DATA: 24/04/2024 17:00 - Versao 1
+# DATA: 24/04/2024 17:00 - Versao 1.0.1
 #
 # ------------------------------------------------------------------------------
 # Autor: Luiz Gustavo <luiz.gustavo@avancoinfo.com.br>
@@ -12,6 +12,7 @@
 # ------------------------------------------------------------------------------
 # Versao 1: Programa para criar cabecalhos padrao com tratamento de linha de
 #           comando.
+# Versao 1.0.1: Colocado opcao de cores para os novos scripts.
 # ------------------------------------------------------------------------------
 # Objetivo: Interface de linha de comando para gerar um cabecalho padronizado em
 # Shell Script
@@ -70,7 +71,7 @@ GERAR_CABECALHO(){
 ${PRIMEIRA_LINHA}
 #
 ################################################################################
-# ${NOME_PROGRAMA} - ${DESCRICAO_CURTA}
+# ${NOME_PROGRAMA}.sh - ${DESCRICAO_CURTA}
 #
 # DATA: $(date +%d/%m/%Y) $(date +%H:%M) - Versao 1
 #
@@ -95,17 +96,53 @@ OPCOES NA LINHA DE COMANDO:
     -h, --help      Mostra esta tela de ajuda e sai
     -V, --version   Mostra a versao do programa e sai
 MODO DE USAR:
-digite o nome do programa e a opcao desejada como acima na linha de comando.
-  exemplo de uso:
-  bash cabecalhoPadrao.sh --help
-  'Ira mostrar essa tela de ajuda e sair.'
-
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 "
+#
+
+# -------------------------------------------------------------------------------
+# Criando opcoes visuais
+# Cores
+readonly RED='\e[1;91m'
+readonly GREEN='\e[1;92m'
+readonly YELLOW='\e[1;93m'
+readonly BLUE='\e[1;94m'
+readonly MAGENTA='\e[1;95m'
+readonly CYAN='\e[1;96m'
+readonly NO_COLOR='\e[0m'
+
+# Funcoes mostram as mensagens no terminal com cores
+# Funcao para exibir mensagens de erro em vermelho
+ERRO_MSG() {
+    echo -e "\${RED}[ERROR] - \$1\${NO_COLOR}"
+}
+
+# Funcao para exibir mensagens de informacao em verde
+INFO_MSG() {
+    echo -e "\${GREEN}[INFO] - \$1\${NO_COLOR}"
+}
+
+# Funcao para exibir mensagens de alerta em amarelo
+ALERTA_MSG() {
+    echo -e "\${YELLOW}[ALERTA] - \$1\${NO_COLOR}"
+}
+
+# Funcao para exibir mensagens em azul
+BLUE_MSG() {
+    echo -e "\${BLUE} \$1\${NO_COLOR}"
+}
+
+# Funcao para exibir mensagens em magenta
+MAGENTA_MSG() {
+    echo -e "\${MAGENTA} \$1\${NO_COLOR}"
+}
+
+# Funcao para exibir mensagens em ciano
+CYAN_MSG() {
+    echo -e "\${CYAN} \$1\${NO_COLOR}"
+}
+
 
 # Funcao para extrair e exibir a versao do programa
 mostrar_versao() {
@@ -151,6 +188,8 @@ END
     mkdir -p "$PASTA_DESTINO"
 
     CAMINHO_ARQUIVO="$PASTA_DESTINO/$NOME_PROGRAMA"
+
+	#awk 'NR==1,/^###############################/{print}' <<< "$HEADER" | sed '/^###############################/d' > "$CAMINHO_ARQUIVO"
 
     echo "$HEADER" > "$CAMINHO_ARQUIVO"
 
